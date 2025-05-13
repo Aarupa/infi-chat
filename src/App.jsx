@@ -4,6 +4,7 @@ import { Layout, Menu, Space } from 'antd';
 import { RocketFilled, MessageFilled, UserOutlined } from '@ant-design/icons';
 import Home from './component/Home';
 import Login from './component/Login';
+import About from './component/About';  
 import Registration from './component/Registration';
 import './App.css';
 import AOS from 'aos';
@@ -35,6 +36,9 @@ function App() {
               <Menu.Item key="home" icon={<RocketFilled />}>
                 <Link to="/">Home</Link>
               </Menu.Item>
+              <Menu.Item key="about" icon={<UserOutlined />}>
+                <Link to="/about">About</Link>
+              </Menu.Item>
               <Menu.Item key="features" icon={<MessageFilled />}>
                 <Link to="/#features">Features</Link>
               </Menu.Item>
@@ -52,6 +56,7 @@ function App() {
         <Content className="app-content">
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Registration />} />
           </Routes>
