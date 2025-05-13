@@ -1,0 +1,124 @@
+/* Import Poppins font if not already imported globally */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    padding: 0 32px;
+    background: transparent;
+    font-family: 'Poppins', Arial, Helvetica, sans-serif;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.logo-icon {
+    font-size: 28px;
+    color: #40a9ff;
+}
+
+.logo-text {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #fff;
+    margin-left: 8px;
+    letter-spacing: 1px;
+}
+
+.nav-menu {
+    background: transparent !important;
+    border-bottom: none;
+    font-family: 'Poppins', Arial, Helvetica, sans-serif;
+}
+
+.ant-menu-item {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+
+/* All menu links white */
+
+.ant-menu-item a {
+    color: #fff !important;
+    text-decoration: none;
+    transition: none !important;
+}
+
+
+/* Remove hover color change */
+
+.ant-menu-item a:hover {
+    color: #fff !important;
+}
+
+
+/* Active menu item: white text and white underline */
+
+.ant-menu-item-selected,
+.ant-menu-item-selected a {
+    color: #fff !important;
+    background: transparent !important;
+    position: relative;
+}
+
+
+/* White underline for active menu item */
+
+.ant-menu-item-selected::after {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    bottom: 8px;
+    height: 3px;
+    background: #fff;
+    border-radius: 2px;
+}
+
+
+/* Remove any other effects for active/hover */
+
+.ant-menu-item-selected,
+.ant-menu-item-selected a,
+.ant-menu-item a:active,
+.ant-menu-item a:focus {
+    box-shadow: none !important;
+    background: transparent !important;
+    outline: none !important;
+}
+
+.register-btn {
+    background: #40a9ff;
+    color: #fff !important;
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-weight: 600;
+    transition: background 0.2s, color 0.2s;
+}
+
+.register-btn:hover {
+    background: #1890ff;
+    color: #fff !important;
+}
+
+@media (max-width: 768px) {
+    .header-container {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0 12px;
+        height: auto;
+    }
+    .logo-text {
+        font-size: 1.1rem;
+    }
+    .nav-menu {
+        width: 100%;
+    }
+}
