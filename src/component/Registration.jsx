@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Typography, Card, Divider } from 'antd';
+import { Form, Input, Button, Typography, Card, Divider, message } from 'antd';
 import { UserOutlined, MailOutlined, LockOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import axiosInstance from '../utils/axiosIntance'; 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const { Title, Text } = Typography;
 
@@ -23,15 +26,41 @@ function Registration() {
     }));
   };
 
-  const handleSubmit = () => {
-    setLoading(true);
-    console.log('Registration form submitted:', formData);
-    // Simulate API call
-    setTimeout(() => {
-      setLoading(false);
-      // Add your actual registration logic here
-    }, 1500);
-  };
+  const handleSubmit = async () => {
+  setLoading(true);
+  console.log('Registration form submitted:', formData);
+
+  try {
+    const response = await axiosInstance.post('/api/register/', formData);
+    console.log(response.data);
+
+    if (response.status === 201 && response.data.message) {
+      console.log('Registration successful:', response.data.message);
+     toast.success(response.data.message);
+      setTimeout(() => {
+        navigate('/login');
+      }, 2000);  // wait 2 seconds before navigating
+
+    } else {
+      toast.error('Registration failed. Please try again.');
+    }
+  } catch (error) {
+    console.error('Registration failed:', error.response ? error.response : error.message);
+
+    if (error.response) {
+      const backendMessage = 
+        error.response.data.message ||
+        error.response.data.detail || 
+        JSON.stringify(error.response.data);
+
+      toast.error(`Error: ${backendMessage}`);
+    } else {
+      toast.error('An error occurred during registration.');
+    }
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div style={{
@@ -157,6 +186,9 @@ function Registration() {
           </Form.Item>
         </Form>
       </Card>
+
+      {/* Toast Container for Toastify */}
+      <ToastContainer />
     </div>
   );
 }
