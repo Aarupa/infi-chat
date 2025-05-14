@@ -1,6 +1,6 @@
 import React from 'react';
-import { Typography, Card, Divider } from 'antd';
-import './Home.css'; // Reuse the same CSS
+import { Typography, Card, Divider, Carousel } from 'antd';
+import './Home.css';
 
 const { Title, Paragraph } = Typography;
 
@@ -24,31 +24,39 @@ const About = () => {
             {/* Testimonials Section */}
             <Divider orientation="center" className="section-divider">What Our Users Say</Divider>
             <div className="testimonial-section" data-aos="zoom-in">
-                <Card className="testimonial-card">
-                    <Paragraph className="testimonial-text">
-                        "Infi-Chat has completely transformed the way we communicate as a team. 
-                        It's fast, reliable, and easy to use!"
-                    </Paragraph>
-                    <Paragraph className="testimonial-author">
-                        - Aarti, UI Developer
-                    </Paragraph>
-                </Card>
-                <Card className="testimonial-card">
-                    <Paragraph className="testimonial-text">
-                        "Deploying Infi-Chat was smooth and effortless. The system runs flawlessly even at scale!"
-                    </Paragraph>
-                    <Paragraph className="testimonial-author">
-                        - Ashish, DevOps & Deployment Lead
-                    </Paragraph>
-                </Card>
-                <Card className="testimonial-card">
-                    <Paragraph className="testimonial-text">
-                        "We loved working on the chatbot logic. It’s exciting to see it engaging users so effectively!"
-                    </Paragraph>
-                    <Paragraph className="testimonial-author">
-                        - Nikita & Akanksha, Chatbot Creators
-                    </Paragraph>
-                </Card>
+                <Carousel autoplay>
+                    <div>
+                        <Card className="testimonial-card">
+                            <Paragraph className="testimonial-text">
+                                "Infi-Chat has completely transformed the way we communicate as a team. 
+                                It's fast, reliable, and easy to use!"
+                            </Paragraph>
+                            <Paragraph className="testimonial-author">
+                                - Aarti, UI Developer
+                            </Paragraph>
+                        </Card>
+                    </div>
+                    <div>
+                        <Card className="testimonial-card">
+                            <Paragraph className="testimonial-text">
+                                "Deploying Infi-Chat was smooth and effortless. The system runs flawlessly even at scale!"
+                            </Paragraph>
+                            <Paragraph className="testimonial-author">
+                                - Ashish, DevOps & Deployment Lead
+                            </Paragraph>
+                        </Card>
+                    </div>
+                    <div>
+                        <Card className="testimonial-card">
+                            <Paragraph className="testimonial-text">
+                                "We loved working on the chatbot logic. It’s exciting to see it engaging users so effectively!"
+                            </Paragraph>
+                            <Paragraph className="testimonial-author">
+                                - Nikita & Akanksha, Chatbot Creators
+                            </Paragraph>
+                        </Card>
+                    </div>
+                </Carousel>
             </div>
         </div>
     );
