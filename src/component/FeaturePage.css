@@ -1,0 +1,78 @@
+/* Animated Floating Icons for Feature Hero Section */
+
+.floating-icons-container {
+    position: absolute;
+    width: 100%;
+    height: 320px;
+    left: 0;
+    top: 0;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.floating-icon {
+    position: absolute;
+    top: 0;
+    opacity: 0.22;
+    animation: floatIcon 6s ease-in-out infinite alternate;
+    color: var(--primary-color);
+    filter: blur(0.5px);
+}
+
+.floating-icon-1 {
+    animation-duration: 5.5s;
+}
+
+.floating-icon-2 {
+    animation-duration: 6.2s;
+}
+
+.floating-icon-3 {
+    animation-duration: 7.1s;
+}
+
+.floating-icon-4 {
+    animation-duration: 5.8s;
+}
+
+.floating-icon-5 {
+    animation-duration: 6.5s;
+}
+
+.floating-icon-6 {
+    animation-duration: 7.3s;
+}
+
+.floating-icon-7 {
+    animation-duration: 6.7s;
+}
+
+.floating-icon-8 {
+    animation-duration: 5.9s;
+}
+
+.floating-icon-9 {
+    animation-duration: 7.6s;
+}
+
+.floating-icon-10 {
+    animation-duration: 6.8s;
+}
+
+@keyframes floatIcon {
+    0% {
+        transform: translateY(0) scale(1) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-40px) scale(1.1) rotate(10deg);
+    }
+    100% {
+        transform: translateY(-80px) scale(1.2) rotate(-10deg);
+    }
+}
+
+.feature-hero {
+    position: relative;
+    overflow: hidden;
+    min-height: 320px;
+}

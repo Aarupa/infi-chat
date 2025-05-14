@@ -166,13 +166,20 @@
 // }
 
 // export default Home;
-
 import React from 'react';
 import { Button, Typography, Card, Row, Col, Divider } from 'antd';
-import { RocketOutlined, MessageOutlined, CodeOutlined, TeamOutlined, CustomerServiceOutlined } from '@ant-design/icons';
+import img from '../assets/chatbot.gif';
+import {
+  RocketOutlined,
+  MessageOutlined,
+  CodeOutlined,
+  TeamOutlined,
+  CustomerServiceOutlined
+} from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import AnimatedBackground from './Animated';
 import './Home.css';
+import { Typewriter } from 'react-simple-typewriter';
 
 const { Title, Paragraph } = Typography;
 
@@ -207,37 +214,59 @@ function Home() {
       <AnimatedBackground />
       <div className="home-container">
         {/* Hero Section */}
+
+
+
         <div className="hero-section" data-aos="fade-down">
-          <Title level={1} className="main-title">
-            Welcome to <span className="accent-text">Infi-Chat</span>
-          </Title>
-          <Paragraph className="hero-text">
-            Infi-Chat is your AI-powered chatbot solution for Indeed and Purshal platforms, 
-            providing intelligent support, query resolution, and automated assistance. 
-            Our cutting-edge technology transforms how businesses interact with their users.
-          </Paragraph>
-          <img 
-            // src="https://i.gifer.com/7JpZ.gif" 
-            alt="AI animation" 
-            className="hero-gif"
-            style={{ width: '200px', margin: '20px 0' }}
-          />
-          <div className="cta-buttons">
-            <Button
-              type="primary"
-              className="primary-btn"
-              onClick={() => navigate('/login')}
-            >
-              Get Started
-            </Button>
-            <Button
-              className="secondary-btn"
-              onClick={() => navigate('/register')}
-            >
-              Learn More
-            </Button>
-          </div>
-        </div>
+  <Title level={1} className="main-title">
+    Welcome to{' '}
+    <span className="accent-text">
+      <Typewriter
+        words={['InFi-Chat']}
+        loop={0} // 0 means infinite loop
+        cursor
+        cursorStyle="|"
+        typeSpeed={100}
+        deleteSpeed={80}
+        delaySpeed={1200}
+      />
+    </span>
+    bot
+  </Title>
+  <Paragraph className="hero-text">
+    Infi-Chat is your AI-powered chatbot solution for Indeed and Purshal platforms,
+    providing intelligent support, query resolution, and automated assistance.
+    Our cutting-edge technology transforms how businesses interact with their users.
+  </Paragraph>
+  <img
+    src={img}
+    alt="AI animation"
+    className="hero-gif"
+    style={{ width: '200px', margin: '20px 0' }}
+  />
+  <div className="cta-buttons">
+    <Button
+      type="primary"
+      className="primary-btn"
+      onClick={() => navigate('/login')}
+    >
+      Get Started
+    </Button>
+    <Button
+      className="secondary-btn"
+      onClick={() => navigate('/register')}
+    >
+      Learn More
+    </Button>
+  </div>
+</div>
+
+
+
+
+
+
+
 
         {/* Mission & Vision */}
         <Divider orientation="center" className="section-divider">Our Purpose</Divider>
@@ -250,7 +279,7 @@ function Home() {
             >
               <Title level={3} className="section-title">Our Vision</Title>
               <Paragraph className="section-text">
-                To revolutionize digital interactions through AI-powered conversational interfaces 
+                To revolutionize digital interactions through AI-powered conversational interfaces
                 that understand, learn, and respond with human-like intelligence across all platforms.
               </Paragraph>
             </Card>
@@ -263,7 +292,7 @@ function Home() {
             >
               <Title level={3} className="section-title">Our Mission</Title>
               <Paragraph className="section-text">
-                To develop intelligent chatbot solutions that enhance user experience on Indeed and Purshal platforms, 
+                To develop intelligent chatbot solutions that enhance user experience on Indeed and Purshal platforms,
                 providing instant, accurate support while continuously learning and improving through advanced ML algorithms.
               </Paragraph>
             </Card>
@@ -294,7 +323,7 @@ function Home() {
         <div className="testimonial-section" data-aos="zoom-in">
           <Card className="testimonial-card">
             <Paragraph className="testimonial-text">
-              "Infi-Chat transformed our customer support with its intelligent chatbot solution. 
+              "Infi-Chat transformed our customer support with its intelligent chatbot solution.
               Our response times improved by 70% and customer satisfaction scores skyrocketed."
             </Paragraph>
             <Paragraph className="testimonial-author">
@@ -312,7 +341,7 @@ function Home() {
             type="primary"
             size="large"
             className="cta-button"
-            onClick={() => navigate('/register')}
+            onClick={() => navigate('/login')}
           >
             Start Free Trial
           </Button>
