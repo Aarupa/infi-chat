@@ -14,6 +14,11 @@ import {
 import './Home.css';
 import './ContactUs.css';
 import img from '../assets/contact.gif'; // Your chatbot image
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import axiosInstance from '../utils/axiosIntance'; 
+import { useState } from 'react';
+
 
 const { Title, Paragraph } = Typography;
 
@@ -26,8 +31,44 @@ const socialLinks = [
 ];
 
 function ContactUs() {
+
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: '',
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+
+  try {
+    const response = await axiosInstance.post('/api/contact/', formData);
+    toast.success(response.data.message || 'Message sent successfully!', {
+      position: 'top-right',
+    });
+    setFormData({ name: '', email: '', message: '' });
+  } catch (error) {
+    toast.error(
+      error.response?.data?.error || 'Failed to send message. Please try again.',
+      { position: 'top-right' }
+    );
+  } finally {
+    setLoading(false);
+  }
+};
+
   return (
     <div className="home-container contactus-narrow">
+       <ToastContainer />
       <Row gutter={[32, 32]} align="middle" className="contact-hero-row">
         {/* Contact Form */}
         <Col xs={24} md={12}>
@@ -35,22 +76,41 @@ function ContactUs() {
             <Title level={2} className="main-title" style={{ textAlign: 'left', marginBottom: 30 }}>
               Contact <span className="accent-text">Us</span>
             </Title>
-            <form className="contact-form">
+            <form className="contact-form" onSubmit={handleSubmit}>
+
               <div className="form-group floating-label">
-                <input type="text" required />
+               <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                />
                 <label><FaUser /> Name</label>
               </div>
               <div className="form-group floating-label">
-                <input type="email" required />
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
                 <label><FaEnvelope /> Email</label>
               </div>
               <div className="form-group floating-label">
-                <textarea rows={4} required />
+                <textarea
+                  rows={4}
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  required
+                />
                 <label><FaCommentDots /> Your Message</label>
               </div>
-              <Button htmlType="submit" className="primary-btn" style={{ width: '100%', marginTop: 20 }}>
-                Send Message
-              </Button>
+             <Button htmlType="submit" className="primary-btn" style={{ width: '100%', marginTop: 20 }} loading={loading}>
+              Send Message
+            </Button>
             </form>
           </div>
         </Col>

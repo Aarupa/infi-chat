@@ -39,10 +39,9 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Registration />} />
             <Route path="/features" element={<FeaturePage />} />
+            <Route path="/register" element={<Registration />} />
             <Route path="/contact" element={<ContactUs />} />
-            {/* Add more routes as needed */}
           </Routes>
         </Content>
 
