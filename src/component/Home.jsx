@@ -341,7 +341,7 @@ function Home() {
             type="primary"
             size="large"
             className="cta-button"
-            onClick={() => navigate('/login')}
+            onClick={() => navigate('/voicebot')}
           >
             Start Free Trial
           </Button>
