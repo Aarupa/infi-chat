@@ -177,7 +177,7 @@ import {
   CustomerServiceOutlined
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import AnimatedBackground from './Animated';
+// import AnimatedBackground from './Animated';
 import './Home.css';
 import { Typewriter } from 'react-simple-typewriter';
 
@@ -211,7 +211,7 @@ function Home() {
 
   return (
     <>
-      <AnimatedBackground />
+      {/* <AnimatedBackground /> */}
       <div className="home-container">
         {/* Hero Section */}
 

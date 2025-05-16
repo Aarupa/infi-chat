@@ -13,7 +13,7 @@ import Footer from './component/Footer';  // ✅ Using your custom Footer
 import './App.css';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import Voicebot from './component/voicebot'; // Importing the Voicebot component
+// import Voicebot from './component/voicebot'; // Importing the Voicebot component
 
 const { Header, Content, Footer: AntFooter } = Layout;
 
@@ -43,7 +43,7 @@ function App() {
             <Route path="/features" element={<FeaturePage />} />
             <Route path="/register" element={<Registration />} />
             <Route path="/contact" element={<ContactUs />} />
-            <Route path="/voicebot" element={<Voicebot />} />
+            {/* <Route path="/voicebot" element={<Voicebot />} /> */}
           </Routes>
         </Content>
 

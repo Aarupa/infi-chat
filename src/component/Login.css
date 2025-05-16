@@ -22,7 +22,7 @@ body,
     padding: 20px;
 }
 
-.login-card {
+.login-card { 
     width: 100%;
     max-width: 480px;
     border-radius: 18px;
