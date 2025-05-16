@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import './Voicebot.css'; // You'll need to create this CSS file
+import './Voicebot.css';
+import micIcon from '../assets/mic_icon.png';
 
 const Voicebot = () => {
   const [messages, setMessages] = useState([]);
@@ -9,31 +10,24 @@ const Voicebot = () => {
   const recognitionRef = useRef(null);
 
   useEffect(() => {
-    // Initialize speech recognition
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
-      recognitionRef.current = new SpeechRecognition();
-      recognitionRef.current.lang = 'en-US';
-      recognitionRef.current.interimResults = true;
-      recognitionRef.current.maxAlternatives = 1;
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'en-US';
+      recognition.interimResults = true;
+      recognition.maxAlternatives = 1;
 
-      recognitionRef.current.onstart = () => {
-        setIsListening(true);
-      };
-
-      recognitionRef.current.onend = () => {
-        setIsListening(false);
-      };
-
-      recognitionRef.current.onerror = (e) => {
+      recognition.onstart = () => setIsListening(true);
+      recognition.onend = () => setIsListening(false);
+      recognition.onerror = (e) => {
         setIsListening(false);
         addMessage(`Error: ${e.error}`, 'bot');
       };
 
-      recognitionRef.current.onresult = (event) => {
+      recognition.onresult = (event) => {
         let interim = '';
         let finalTranscript = '';
-        
+
         for (let i = event.resultIndex; i < event.results.length; i++) {
           if (event.results[i].isFinal) {
             finalTranscript += event.results[i][0].transcript;
@@ -41,23 +35,22 @@ const Voicebot = () => {
             interim += event.results[i][0].transcript;
           }
         }
-        
-        if (interim) {
-          setInterimTranscript(interim);
-        } else {
-          setInterimTranscript('');
-        }
-        
+
+        setInterimTranscript(interim);
+
         if (finalTranscript) {
+          setInterimTranscript('');
           submitMessage(finalTranscript.trim());
         }
       };
+
+      recognitionRef.current = recognition;
+    } else {
+      alert("Speech Recognition not supported in this browser.");
     }
 
     return () => {
-      if (recognitionRef.current) {
-        recognitionRef.current.stop();
-      }
+      if (recognitionRef.current) recognitionRef.current.stop();
     };
   }, []);
 
@@ -70,7 +63,7 @@ const Voicebot = () => {
       id: Date.now(),
       text,
       sender,
-      isTyping
+      isTyping,
     };
     setMessages(prev => [...prev, newMessage]);
   };
@@ -83,7 +76,6 @@ const Voicebot = () => {
 
   const toggleListening = () => {
     if (!recognitionRef.current) return;
-    
     if (isListening) {
       recognitionRef.current.stop();
     } else {
@@ -94,113 +86,103 @@ const Voicebot = () => {
   const botRespond = async (message) => {
     const typingId = Date.now();
     addMessage('', 'bot', true);
-    
-    await new Promise(r => setTimeout(r, 300));
-    
+
+    await new Promise(resolve => setTimeout(resolve, 500));
+
     const responseText = getBotResponse(message);
-    
-    // Remove the typing indicator
+
+    // Remove typing indicator
     setMessages(prev => prev.filter(msg => msg.id !== typingId));
-    
-    // Add the actual response
+
     const responseId = Date.now();
-    addMessage('', 'bot');
-    
-    // Simulate typing effect
+    setMessages(prev => [...prev, { id: responseId, text: '', sender: 'bot' }]);
+
     let i = 0;
-    const typingInterval = setInterval(() => {
+    const interval = setInterval(() => {
       if (i < responseText.length) {
-        setMessages(prev => prev.map(msg => 
-          msg.id === responseId 
-            ? { ...msg, text: msg.text + responseText.charAt(i) } 
+        setMessages(prev => prev.map(msg =>
+          msg.id === responseId
+            ? { ...msg, text: msg.text + responseText.charAt(i) }
             : msg
         ));
         i++;
       } else {
-        clearInterval(typingInterval);
+        clearInterval(interval);
         speakText(responseText);
       }
-    }, 25 + Math.random() * 50);
+    }, 30);
   };
 
   const getBotResponse = (input) => {
     const text = input.toLowerCase();
-    if (text.includes('hello') || text.includes('hi')) {
-      return "Hello! How can I assist you today?";
-    }
-    if (text.includes('how are you')) {
-      return "I'm just code, but I'm here to help you!";
-    }
-    if (text.includes('your name')) {
-      return "I'm a Voicebot inspired by ChatGPT.";
-    }
-    if (text.includes('time')) {
-      return `Current time is ${new Date().toLocaleTimeString()}.`;
-    }
-    if (text.includes('thank') || text.includes('thanks')) {
-      return "You're welcome!";
-    }
+    if (text.includes('hello') || text.includes('hi')) return "Hello! How can I assist you today?";
+    if (text.includes('how are you')) return "I'm just code, but I'm here to help you!";
+    if (text.includes('your name')) return "I'm a Voicebot inspired by ChatGPT.";
+    if (text.includes('time')) return `Current time is ${new Date().toLocaleTimeString()}.`;
+    if (text.includes('thank')) return "You're welcome!";
     return "Sorry, I didn't understand that. Could you please try again?";
   };
 
   const speakText = (text) => {
     if (!('speechSynthesis' in window)) return;
+
     if (window.speechSynthesis.speaking) {
       window.speechSynthesis.cancel();
     }
+
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'en-US';
     window.speechSynthesis.speak(utterance);
   };
 
   const submitMessage = async (message) => {
-    if (!message) return;
+    if (!message.trim()) return;
     addMessage(message, 'user');
     await botRespond(message);
   };
 
-  const isSpeechSupported = !!recognitionRef.current;
+  const isSpeechSupported = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
 
   return (
     <div className="voicebot-container">
-      <header>Voice based Infi-chat</header>
+      <header>Voice-based Infi-chat</header>
       <main>
-        <div 
-          id="chat-container" 
+        <div
+          id="chat-container"
           ref={chatContainerRef}
-          role="log" 
-          aria-live="polite" 
-          aria-relevant="additions" 
+          role="log"
+          aria-live="polite"
+          aria-relevant="additions"
           aria-label="Conversation Messages"
         >
-          {messages.map((message) => (
-            <div 
-              key={message.id}
-              className={`message ${message.sender} ${message.isTyping ? 'typing' : ''}`}
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={`message ${msg.sender} ${msg.isTyping ? 'typing' : ''}`}
             >
-              {message.text}
+              {msg.text}
             </div>
           ))}
           {interimTranscript && (
-            <div className="message user interim">
-              {interimTranscript}…
-            </div>
+            <div className="message user interim">{interimTranscript}…</div>
           )}
         </div>
-        <div aria-label="Voice input controls">
-          <button 
-            type="button" 
-            id="mic-button" 
-            aria-pressed={isListening}
-            aria-label={isListening ? 'Stop listening' : 'Start voice input'}
-            title={isListening ? 'Listening...' : 'Click microphone to start listening'}
-            onClick={toggleListening}
-            disabled={!isSpeechSupported}
-            className={isListening ? 'listening' : ''}
-          >
-            🎤
-          </button>
-        </div>
+
+        <div className="mic-wrapper" aria-label="Voice input controls">
+  <button
+  type="button"
+  id="mic-button"
+  onClick={toggleListening}
+  aria-pressed={isListening}
+  aria-label={isListening ? 'Stop listening' : 'Start voice input'}
+  title={isListening ? 'Listening...' : 'Click microphone to start listening'}
+  className={isListening ? 'listening' : ''}
+  disabled={!isSpeechSupported}
+>
+  <img src={micIcon} alt="Mic icon" style={{ width: '120%', height: '120%' }} />
+
+</button>
+</div>
       </main>
     </div>
   );
