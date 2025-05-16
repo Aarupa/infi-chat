@@ -10,7 +10,7 @@ import {
   FaInstagram,
   FaWhatsapp,
   FaYoutube,
-} from 'react-icons/fa';
+} from 'react-icons/fa6';
 import './Home.css';
 import './ContactUs.css';
 import img from '../assets/contact.gif'; // Your chatbot image

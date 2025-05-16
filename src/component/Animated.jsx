@@ -1,5 +1,5 @@
 import React from 'react';
-import './Animated.css';
+import './Animated.css'
 
 const AnimatedBackground = () => {
   return (

@@ -10,6 +10,7 @@ import FeaturePage from './component/FeaturePage';
 import ContactUs from './component/ContactUs';
 import Navbar from './component/Navbar';  // ✅ Using your custom Navbar
 import Footer from './component/Footer';  // ✅ Using your custom Footer
+import AnimatedBackground from './component/Animated';
 import './App.css';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
@@ -42,6 +43,7 @@ function App() {
             <Route path="/register" element={<Registration />} />
             <Route path="/features" element={<FeaturePage />} />
             <Route path="/contact" element={<ContactUs />} />
+            <Route path="/AnimatedBackground" element={<AnimatedBackground />} />
             {/* Add more routes as needed */}
           </Routes>
         </Content>

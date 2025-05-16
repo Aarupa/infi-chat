@@ -288,8 +288,7 @@ function Home() {
             <Card
               hoverable
               className="vision-card"
-              data-aos="fade-left"
-            >
+              data-aos="fade-left">
               <Title level={3} className="section-title">Our Mission</Title>
               <Paragraph className="section-text">
                 To develop intelligent chatbot solutions that enhance user experience on Indeed and Purshal platforms,
@@ -341,8 +340,7 @@ function Home() {
             type="primary"
             size="large"
             className="cta-button"
-            onClick={() => navigate('/login')}
-          >
+            onClick={() => navigate('/register')}>
             Start Free Trial
           </Button>
         </div>
