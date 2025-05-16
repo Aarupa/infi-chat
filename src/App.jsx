@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 
 import { Layout } from 'antd';
 import Home from './component/Home';
@@ -8,16 +8,24 @@ import About from './component/About';
 import Registration from './component/Registration';
 import FeaturePage from './component/FeaturePage';
 import ContactUs from './component/ContactUs';
-import Navbar from './component/Navbar';  // ✅ Using your custom Navbar
-import Footer from './component/Footer';  // ✅ Using your custom Footer
+import Navbar from './component/Navbar';
+import Footer from './component/Footer';
 import AnimatedBackground from './component/Animated';
 import './App.css';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import Voicebot from './component/Voicebot';
 
+// Destructure layout components
 const { Header, Content, Footer: AntFooter } = Layout;
 
-function App() {
+// Create a wrapper component inside App.jsx for layout control
+function AppLayout() {
+  const location = useLocation();
+
+  // Check if current path is "/Voicebot"
+  const isVoicebotPage = location.pathname === '/Voicebot';
+
   useEffect(() => {
     AOS.init({
       duration: 800,
@@ -27,32 +35,40 @@ function App() {
   }, []);
 
   return (
-    <Router>
-      <Layout className="app-layout">
-        {/* ✅ Use Navbar component inside Header */}
+    <Layout className="app-layout">
+      {/* Conditionally render Navbar */}
+      {!isVoicebotPage && (
         <Header className="app-header">
           <Navbar />
         </Header>
+      )}
 
-        {/* ✅ Main routed content */}
-        <Content className="app-content">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Registration />} />
-            <Route path="/features" element={<FeaturePage />} />
-            <Route path="/contact" element={<ContactUs />} />
-            <Route path="/AnimatedBackground" element={<AnimatedBackground />} />
-            {/* Add more routes as needed */}
-          </Routes>
-        </Content>
+      <Content className="app-content">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/features" element={<FeaturePage />} />
+          <Route path="/register" element={<Registration />} />
+          <Route path="/contact" element={<ContactUs />} />
+          <Route path="/Voicebot" element={<Voicebot />} />
+        </Routes>
+      </Content>
 
-        {/* ✅ Use Footer component inside AntFooter */}
+      {/* Conditionally render Footer */}
+      {!isVoicebotPage && (
         <AntFooter className="app-footer">
           <Footer />
         </AntFooter>
-      </Layout>
+      )}
+    </Layout>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AppLayout />
     </Router>
   );
 }
