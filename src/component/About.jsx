@@ -22,7 +22,7 @@ const About = () => {
             </div>
 
             {/* Testimonials Section */}
-            <Divider orientation="center" className="section-divider">What Our Users Say</Divider>
+            <Divider orientation="center" className="section-divider">What Our Teams Say</Divider>
             <div className="testimonial-section" data-aos="zoom-in">
                 <Carousel autoplay>
                     <div>

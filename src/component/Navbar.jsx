@@ -18,7 +18,6 @@ function Navbar() {
     if (location.pathname === '/contact') return 'contactus';
     return '';
   };
-
   // Define menu items using the items prop
   const menuItems = [
     {
@@ -27,27 +26,25 @@ function Navbar() {
       label: <Link to="/">Home</Link>,
     },
     {
+      key: 'about',
+      icon: <InfoCircleFilled />,
+      label: <Link to="/about">About</Link>,
+    },
+    {
       key: 'features',
       icon: <MessageFilled />,
       label: <Link to="/features">Features</Link>,
     },
-    
-    {
-      key: 'login',
-      icon: <UserOutlined />,
-      label: <Link to="/login">Login</Link>,
-    },
-   
     {
       key: 'contactus',
       label: <Link to="/contact">Contact Us</Link>,
     },
     {
-      key: 'about',
-      icon: <InfoCircleFilled />,
-      label: <Link to="/about">About</Link>,
+      key: 'login',
+      icon: <UserOutlined />,
+      label: <Link to="/login">Login</Link>,
     },
-     {
+    {
       key: 'register',
       label: (
         <Link to="/register" className="register-btn">
@@ -56,7 +53,6 @@ function Navbar() {
       ),
     },
   ];
-
   return (
     <div className="header-container">
       <Link to="/" className="logo">
