@@ -23,3 +23,24 @@
     border-color: var(--accent-color) !important;
     box-shadow: 0 0 0 2px rgba(123, 44, 191, 0.08);
 }
+
+/* ...existing code... */
+
+.ant-card {
+    background: rgba(255,255,255,0.8) !important;
+    border-radius: 18px !important;
+    box-shadow: 0 8px 32px rgba(123, 44, 191, 0.10) !important;
+    border: 1px solid rgba(123, 44, 191, 0.10);
+    overflow: hidden;
+    padding: 0 !important;
+}
+
+.ant-card-body {
+    padding: 28px 32px !important; /* Reduce padding for less height */
+}
+
+@media (max-width: 600px) {
+    .ant-card-body {
+        padding: 18px 8px !important;
+    }
+}
