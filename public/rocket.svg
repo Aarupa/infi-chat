@@ -1,0 +1,4 @@
+<!-- Save this as rocket.svg in your public folder -->
+<svg viewBox="64 64 896 896" focusable="false" width="1em" height="1em" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <path d="M924 160H728V96c0-17.7-14.3-32-32-32H328c-17.7 0-32 14.3-32 32v64H100c-17.7 0-32 14.3-32 32v128c0 17.7 14.3 32 32 32h64v480c0 17.7 14.3 32 32 32h632c17.7 0 32-14.3 32-32V352h64c17.7 0 32-14.3 32-32V192c0-17.7-14.3-32-32-32zM328 128h368v64H328V128zm496 736H200V352h624v512zm96-576H100V192h824v96z"/>
+</svg>
