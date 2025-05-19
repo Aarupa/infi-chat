@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../utils/axiosIntance'; 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import './Registration.css'; // Import the custom CSS (see below)
 
 const { Title, Text } = Typography;
 
@@ -68,7 +69,9 @@ function Registration() {
       justifyContent: 'center',
       alignItems: 'center',
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #6a0dad 0%, #8a2be2 100%)',
+      // background: 'linear-gradient(135deg, #6a0dad 0%, #8a2be2 100%)',
+      background: 'rgba(255, 255, 255, 0.8)', // Add this
+      backdropFilter: 'blur(10px)',    
       padding: '20px'
     }}>
       <Card

@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { Form, Input, Button, Typography, Card, Divider } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import axiosInstance from '../utils/axiosIntance'; // Ensure axios instance is imported correctly
-import { ToastContainer, toast } from 'react-toastify'; // Import Toastify for notifications
+import axiosInstance from '../utils/axiosIntance';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; // Import Toastify CSS
+import './Login.css'; // Import the custom CSS (see below)
 
 const { Title, Text } = Typography;
 
@@ -23,68 +25,41 @@ function Login() {
     }));
   };
 
-const handleSubmit = async () => {
-  setLoading(true);
-  console.log('Login form submitted:', formData);
-
-  try {
-    const response = await axiosInstance.post('/api/login/', formData);
-    console.log(response.data);
-
-    if (response.status === 200 && response.data.message) {
-    console.log('Login successful:', response.data.message);
-    toast.success(response.data.message);
-      setTimeout(() => {
-        navigate('/');
-      }, 2000);  // wait 2 seconds before navigating
-
-    } else {
-      toast.error('Login failed. Please try again.');
+  const handleSubmit = async () => {
+    setLoading(true);
+    try {
+      const response = await axiosInstance.post('/api/login/', formData);
+      if (response.status === 200 && response.data.message) {
+        toast.success(response.data.message);
+        setTimeout(() => {
+          navigate('/');
+        }, 2000);
+      } else {
+        toast.error('Login failed. Please try again.');
+      }
+    } catch (error) {
+      const errorMessage = error.response?.data?.error || 'Login failed! Please check your credentials.';
+      toast.error(errorMessage, {
+        position: 'top-right',
+        autoClose: 5000,
+      });
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error('Login failed:', error.response ? error.response.data : error.message);
-
-    // Show error message using Toastify (use message from API response if available)
-    const errorMessage = error.response?.data?.error || 'Login failed! Please check your credentials.';
-    toast.error(errorMessage, {
-      position: 'top-right',
-      autoClose: 5000,
-    });
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
   return (
-    <div style={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      minHeight: '100vh',
-      maxWidth: '100vw',
-      background: 'linear-gradient(135deg, #6a0dad 0%, #8a2be2 100%)',
-      padding: '20px'
-    }}>
-      <Card
-        style={{
-          width: '100%',
-          maxWidth: '480px',
-          borderRadius: '12px',
-          boxShadow: '0 10px 25px rgba(0, 0, 0, 0.2)',
-          overflow: 'hidden'
-        }}
-      >
+    <div className="login-bg">
+      <Card className="login-card fade-in">
         <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-          <Title level={2} style={{ color: '#6a0dad', marginBottom: '10px' }}>
+          <Title level={2} style={{ color: '#6a0dad', marginBottom: '10px', fontFamily: 'Poppins, sans-serif' }}>
             Welcome Back
           </Title>
-          <Text type="secondary" style={{ fontSize: '16px' }}>
+          <Text type="secondary" style={{ fontSize: '16px', fontFamily: 'Poppins, sans-serif' }}>
             Sign in to your account to continue
           </Text>
         </div>
-
-        <Form layout="vertical" onFinish={handleSubmit}>
+        <Form layout="vertical" onFinish={handleSubmit} className="animated-form">
           <Form.Item
             label="Username"
             name="username"
@@ -98,9 +73,9 @@ const handleSubmit = async () => {
               onChange={handleChange}
               size="large"
               placeholder="Enter your username"
+              style={{ fontFamily: 'Poppins, sans-serif' }}
             />
           </Form.Item>
-
           <Form.Item
             label="Password"
             name="password"
@@ -116,19 +91,18 @@ const handleSubmit = async () => {
               onChange={handleChange}
               size="large"
               placeholder="Enter your password"
+              style={{ fontFamily: 'Poppins, sans-serif' }}
             />
           </Form.Item>
-
           <Form.Item style={{ marginBottom: '10px', textAlign: 'right' }}>
             <Button
               type="link"
-              style={{ padding: 0, color: '#6a0dad' }}
+              style={{ padding: 0, color: '#6a0dad', fontFamily: 'Poppins, sans-serif' }}
               onClick={() => console.log('Forgot password clicked')}
             >
               Forgot password?
             </Button>
           </Form.Item>
-
           <Form.Item>
             <Button
               type="primary"
@@ -136,29 +110,30 @@ const handleSubmit = async () => {
               block
               size="large"
               loading={loading}
+              className="primary-btn"
               style={{
                 height: '48px',
                 fontSize: '16px',
                 background: 'linear-gradient(135deg, #6a0dad 0%, #8a2be2 100%)',
                 border: 'none',
-                borderRadius: '8px'
+                borderRadius: '8px',
+                fontFamily: 'Poppins, sans-serif'
               }}
             >
               Sign In
             </Button>
           </Form.Item>
-
           <Divider style={{ color: '#888' }}>or</Divider>
-
           <Form.Item style={{ textAlign: 'center', marginBottom: 0 }}>
-            <Text style={{ fontSize: '16px' }}>Don't have an account? </Text>
+            <Text style={{ fontSize: '16px', fontFamily: 'Poppins, sans-serif' }}>Don't have an account? </Text>
             <Button
               type="link"
               style={{
                 padding: 0,
                 fontSize: '16px',
                 color: '#6a0dad',
-                fontWeight: '500'
+                fontWeight: '500',
+                fontFamily: 'Poppins, sans-serif'
               }}
               onClick={() => navigate('/register')}
             >
@@ -167,7 +142,6 @@ const handleSubmit = async () => {
           </Form.Item>
         </Form>
       </Card>
-
       <ToastContainer />
     </div>
   );
