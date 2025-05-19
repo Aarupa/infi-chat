@@ -4,8 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import axiosInstance from '../utils/axiosIntance';
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'; // Import Toastify CSS
-import './Login.css'; // Import the custom CSS (see below)
+import 'react-toastify/dist/ReactToastify.css';
+import './Login.css';
+import img from '../assets/login.gif'; // Your chatbot image
 
 const { Title, Text } = Typography;
 
@@ -50,98 +51,108 @@ function Login() {
 
   return (
     <div className="login-bg">
-      <Card className="login-card fade-in">
-        <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-          <Title level={2} style={{ color: '#6a0dad', marginBottom: '10px', fontFamily: 'Poppins, sans-serif' }}>
-            Welcome Back
-          </Title>
-          <Text type="secondary" style={{ fontSize: '16px', fontFamily: 'Poppins, sans-serif' }}>
-            Sign in to your account to continue
-          </Text>
-        </div>
-        <Form layout="vertical" onFinish={handleSubmit} className="animated-form">
-          <Form.Item
-            label="Username"
-            name="username"
-            rules={[{ required: true, message: 'Please input your username!' }]}
-          >
-            <Input
-              prefix={<UserOutlined style={{ color: 'rgba(0,0,0,.25)' }} />}
-              type="text"
+      <div className="login-container">
+        <Card className="login-card fade-in">
+          <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+            <Title level={2} style={{ color: '#6a0dad', marginBottom: '10px', fontFamily: 'Poppins, sans-serif' }}>
+              Welcome Back
+            </Title>
+            <Text type="secondary" style={{ fontSize: '16px', fontFamily: 'Poppins, sans-serif' }}>
+              Sign in to your account to continue
+            </Text>
+          </div>
+          <Form layout="vertical" onFinish={handleSubmit} className="animated-form">
+            <Form.Item
+              label="Username"
               name="username"
-              value={formData.username}
-              onChange={handleChange}
-              size="large"
-              placeholder="Enter your username"
-              style={{ fontFamily: 'Poppins, sans-serif' }}
-            />
-          </Form.Item>
-          <Form.Item
-            label="Password"
-            name="password"
-            rules={[
-              { required: true, message: 'Please input your password!' },
-              { min: 6, message: 'Password must be at least 6 characters!' }
-            ]}
-          >
-            <Input.Password
-              prefix={<LockOutlined style={{ color: 'rgba(0,0,0,.25)' }} />}
+              rules={[{ required: true, message: 'Please input your username!' }]}
+            >
+              <Input
+                prefix={<UserOutlined style={{ color: 'rgba(0,0,0,.25)' }} />}
+                type="text"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                size="large"
+                placeholder="Enter your username"
+                style={{ fontFamily: 'Poppins, sans-serif' }}
+              />
+            </Form.Item>
+            <Form.Item
+              label="Password"
               name="password"
-              value={formData.password}
-              onChange={handleChange}
-              size="large"
-              placeholder="Enter your password"
-              style={{ fontFamily: 'Poppins, sans-serif' }}
-            />
-          </Form.Item>
-          <Form.Item style={{ marginBottom: '10px', textAlign: 'right' }}>
-            <Button
-              type="link"
-              style={{ padding: 0, color: '#6a0dad', fontFamily: 'Poppins, sans-serif' }}
-              onClick={() => console.log('Forgot password clicked')}
+              rules={[
+                { required: true, message: 'Please input your password!' },
+                { min: 6, message: 'Password must be at least 6 characters!' }
+              ]}
             >
-              Forgot password?
-            </Button>
-          </Form.Item>
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              block
-              size="large"
-              loading={loading}
-              className="primary-btn"
-              style={{
-                height: '48px',
-                fontSize: '16px',
-                background: 'linear-gradient(135deg, #6a0dad 0%, #8a2be2 100%)',
-                border: 'none',
-                borderRadius: '8px',
-                fontFamily: 'Poppins, sans-serif'
-              }}
-            >
-              Sign In
-            </Button>
-          </Form.Item>
-          <Divider style={{ color: '#888' }}>or</Divider>
-          <Form.Item style={{ textAlign: 'center', marginBottom: 0 }}>
-            <Text style={{ fontSize: '16px', fontFamily: 'Poppins, sans-serif' }}>Don't have an account? </Text>
-            <Button
-              type="link"
-              style={{
-                padding: 0,
-                fontSize: '16px',
-                color: '#6a0dad',
-                fontWeight: '500',
-                fontFamily: 'Poppins, sans-serif'
-              }}
-              onClick={() => navigate('/register')}
-            >
-              Sign up now
-            </Button>
-          </Form.Item>
-        </Form>
-      </Card>
+              <Input.Password
+                prefix={<LockOutlined style={{ color: 'rgba(0,0,0,.25)' }} />}
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                size="large"
+                placeholder="Enter your password"
+                style={{ fontFamily: 'Poppins, sans-serif' }}
+              />
+            </Form.Item>
+            <Form.Item style={{ marginBottom: '10px', textAlign: 'right' }}>
+              <Button
+                type="link"
+                style={{ padding: 0, color: '#6a0dad', fontFamily: 'Poppins, sans-serif' }}
+                onClick={() => console.log('Forgot password clicked')}
+              >
+                Forgot password?
+              </Button>
+            </Form.Item>
+            <Form.Item>
+              <Button
+                type="primary"
+                htmlType="submit"
+                block
+                size="large"
+                loading={loading}
+                className="primary-btn"
+                style={{
+                  height: '48px',
+                  fontSize: '16px',
+                  background: 'linear-gradient(135deg, #6a0dad 0%, #8a2be2 100%)',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontFamily: 'Poppins, sans-serif'
+                }}
+              >
+                Sign In
+              </Button>
+            </Form.Item>
+            <Divider style={{ color: '#888' }}>or</Divider>
+            <Form.Item style={{ textAlign: 'center', marginBottom: 0 }}>
+              <Text style={{ fontSize: '16px', fontFamily: 'Poppins, sans-serif' }}>Don't have an account? </Text>
+              <Button
+                type="link"
+                style={{
+                  padding: 0,
+                  fontSize: '16px',
+                  color: '#6a0dad',
+                  fontWeight: '500',
+                  fontFamily: 'Poppins, sans-serif'
+                }}
+                onClick={() => navigate('/register')}
+              >
+                Sign up now
+              </Button>
+            </Form.Item>
+          </Form>
+        </Card>
+
+        <div className="login-image-container">
+          <img
+            src={img}
+            alt="Login Visual"
+            className="login-image"
+          />
+        </div>
+      </div>
       <ToastContainer />
     </div>
   );
