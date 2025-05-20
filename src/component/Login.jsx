@@ -62,40 +62,36 @@ function Login() {
             </Text>
           </div>
           <Form layout="vertical" onFinish={handleSubmit} className="animated-form">
-            <Form.Item
-              label="Username"
-              name="username"
-              rules={[{ required: true, message: 'Please input your username!' }]}
-            >
-              <Input
-                prefix={<UserOutlined style={{ color: 'rgba(0,0,0,.25)' }} />}
-                type="text"
-                name="username"
-                value={formData.username}
-                onChange={handleChange}
-                size="large"
-                placeholder="Enter your username"
-                style={{ fontFamily: 'Poppins, sans-serif' }}
-              />
-            </Form.Item>
-            <Form.Item
-              label="Password"
-              name="password"
-              rules={[
-                { required: true, message: 'Please input your password!' },
-                { min: 6, message: 'Password must be at least 6 characters!' }
-              ]}
-            >
-              <Input.Password
-                prefix={<LockOutlined style={{ color: 'rgba(0,0,0,.25)' }} />}
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                size="large"
-                placeholder="Enter your password"
-                style={{ fontFamily: 'Poppins, sans-serif' }}
-              />
-            </Form.Item>
+            <div className="form-group cut-label">
+  <label>
+    <span className="label-icon"><UserOutlined /></span>
+    Username
+  </label>
+  <input
+    type="text"
+    name="username"
+    value={formData.username}
+    onChange={handleChange}
+    required
+    autoComplete="username"
+  />
+</div>
+
+<div className="form-group cut-label">
+  <label>
+    <span className="label-icon"><LockOutlined /></span>
+    Password
+  </label>
+  <input
+    type="password"
+    name="password"
+    value={formData.password}
+    onChange={handleChange}
+    required
+    autoComplete="current-password"
+  />
+</div>
+
             <Form.Item style={{ marginBottom: '10px', textAlign: 'right' }}>
               <Button
                 type="link"

@@ -10,6 +10,7 @@ import FeaturePage from './component/FeaturePage';
 import ContactUs from './component/ContactUs';
 import Navbar from './component/Navbar';  // ✅ Using your custom Navbar
 import Footer from './component/Footer';  // ✅ Using your custom Footer
+import RobotFaceChatbot from './component/RobotFaceChatbot'; // ✅ Using your custom RobotFaceChatbot
 import './App.css';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
@@ -43,6 +44,7 @@ function App() {
             <Route path="/features" element={<FeaturePage />} />
             <Route path="/register" element={<Registration />} />
             <Route path="/contact" element={<ContactUs />} />
+            <Route path="/robotface" element={<RobotFaceChatbot />} />
             {/* <Route path="/voicebot" element={<Voicebot />} /> */}
           </Routes>
         </Content>
