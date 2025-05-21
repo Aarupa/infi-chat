@@ -1,0 +1,106 @@
+body.hide-layout,
+html.hide-layout {
+    overflow: hidden !important;
+    height: 100vh !important;
+    width: 100vw !important;
+    position: fixed !important;
+}
+
+.chatbot-bg {
+    width: 100vw;
+    height: 100vh;
+    min-height: 100svh;
+    background: linear-gradient(to right, #6618b6, #15002b);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+}
+
+.chatbot-face {
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(to right, #6618b6, #15002b);
+    border-radius: 8vw;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+
+/* Eyes (proportionally large) */
+
+.chatbot-eye {
+    position: absolute;
+    background: #fff;
+    width: 7vw;
+    height: 7vw;
+    min-width: 45px;
+    min-height: 45px;
+    max-width: 90px;
+    max-height: 90px;
+    border-radius: 50%;
+    top: 30%;
+    box-shadow: 0 0 24px #fff8;
+    transition: height 0.18s cubic-bezier(.55, 0, .1, 1);
+}
+
+.chatbot-eye.left {
+    left: 22%;
+}
+
+.chatbot-eye.right {
+    right: 22%;
+}
+
+.chatbot-eye.blink {
+    height: 2vw;
+    min-height: 12px;
+    max-height: 28px;
+}
+
+
+/* Mouth SVG shape transition */
+
+.chatbot-mouth-svg {
+    pointer-events: auto;
+}
+
+.chatbot-mouth-shape {
+    transition: d 0.18s cubic-bezier(.55, 0, .1, 1);
+}
+
+
+/* Responsive tweaks */
+
+@media (max-width: 600px) {
+    .chatbot-face {
+        border-radius: 18vw;
+    }
+    .chatbot-eye {
+        width: 22vw;
+        height: 22vw;
+        min-width: 38px;
+        min-height: 38px;
+        max-width: 90px;
+        max-height: 90px;
+    }
+    .chatbot-eye.blink {
+        height: 4vw;
+        min-height: 8px;
+        max-height: 18px;
+    }
+    .chatbot-mouth-svg {
+        width: 100vw !important;
+        min-width: 150px !important;
+        max-width: 400px !important;
+        height: 50vw !important;
+        min-height: 30px !important;
+        max-height: 100px !important;
+    }
+}

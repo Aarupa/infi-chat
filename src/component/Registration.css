@@ -1,4 +1,5 @@
 /* Match input border color with ContactUs */
+
 .ant-input,
 .ant-input-password,
 .ant-input-affix-wrapper {
@@ -10,8 +11,10 @@
     transition: border-color 0.3s;
 }
 
+
 /* Remove double border for Ant Design inputs with prefix/suffix */
-.ant-input-affix-wrapper > .ant-input {
+
+.ant-input-affix-wrapper>.ant-input {
     border: none !important;
     box-shadow: none !important;
     background: transparent !important;
@@ -25,7 +28,7 @@
 }
 
 .ant-card {
-    background: rgba(255,255,255,0.8) !important;
+    background: rgba(255, 255, 255, 0.8) !important;
     border-radius: 18px !important;
     box-shadow: 0 8px 32px rgba(123, 44, 191, 0.10) !important;
     border: 1px solid rgba(123, 44, 191, 0.10);
@@ -34,7 +37,8 @@
 }
 
 .ant-card-body {
-    padding: 28px 32px !important; /* Reduce padding for less height */
+    padding: 28px 32px !important;
+    /* Reduce padding for less height */
 }
 
 @media (max-width: 600px) {

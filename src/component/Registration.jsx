@@ -80,7 +80,8 @@ function Registration() {
           maxWidth: '480px',
           borderRadius: '12px',
           boxShadow: '0 10px 25px rgba(0, 0, 0, 0.2)',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          marginTop: '-40px',
         }}
         bodyStyle={{ padding: '40px' }}
       >
