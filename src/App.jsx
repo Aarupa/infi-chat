@@ -10,6 +10,7 @@ import ContactUs from './component/ContactUs';
 import Navbar from './component/Navbar';
 import Footer from './component/Footer';
 import VoiceLayout from './component/VoiceLayout';
+import GmttBot from './component/GmttBot';
 
 import './App.css';
 import AOS from 'aos';
@@ -32,6 +33,14 @@ function App() {
         {/* Voicebot route with isolated layout */}
         <Route
           path="/voicebot"
+          element={
+            <div className="voicebot-isolation-wrapper">
+              <VoiceLayout />
+            </div>
+          }
+        />
+          <Route
+          path="/gmtt"
           element={
             <div className="voicebot-isolation-wrapper">
               <VoiceLayout />
