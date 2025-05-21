@@ -1,12 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-// import micIcon from '../assets/mic_icon.png';
 
 const styles = {
   voicebotContainer: {
-    fontFamily: 'Arial, sans-serif',
+    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
     background: 'linear-gradient(135deg, #f8f0ff 0%, #5a189a 100%)',
     margin: 0,
-    padding: 0,
+    padding: '0 0 0px 0',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
@@ -14,63 +13,66 @@ const styles = {
     height: '100vh',
     overflow: 'hidden',
     position: 'relative',
+    color: '#f8f0ff',
   },
   header: {
-    color: '#f8f0ff',
+    fontWeight: '700',
     textAlign: 'center',
-    margin: '20px 0 10px 0',
-    fontSize: '2rem',
-    textShadow: '0 0 10px #c77dff',
-    letterSpacing: '1px',
+    margin: '20px 0 20px 0',
+    fontSize: '2.5rem',
+    textShadow: '0 0 15px #c77dff',
+    letterSpacing: '1.5px',
   },
   chatContainer: {
     display: 'flex',
     flexDirection: 'column',
     maxWidth: 800,
-    width: '100%',
+    width: '90%',
     margin: '0 auto',
-    background: 'rgba(90, 24, 154, 0.8)',
-    padding: 30,
-    borderRadius: 12,
+    background: 'rgba(90, 24, 154, 0.85)',
+    padding: 32,
+    borderRadius: 20,
     height: '60vh',
+    marginBottom: '40px',
     overflowY: 'auto',
-    border: '1px solid rgba(199, 125, 255, 0.3)',
-    boxShadow: '0 4px 30px rgba(123, 44, 191, 0.2)',
-    backdropFilter: 'blur(10px)',
-    transition: 'all 0.3s ease-in-out',
+    border: '1px solid rgba(199, 125, 255, 0.4)',
+    boxShadow: '0 8px 40px rgba(123, 44, 191, 0.3)',
+    backdropFilter: 'blur(20px)',
+    transition: 'all 0.4s ease-in-out',
   },
   message: {
-    padding: '12px 18px',
+    padding: '14px 20px',
     maxWidth: '75%',
-    lineHeight: 1.5,
+    lineHeight: 1.6,
     wordWrap: 'break-word',
-    fontSize: 16,
-    marginBottom: 10,
-    borderRadius: 15,
-    boxShadow: '0 4px 15px rgba(123, 44, 191, 0.15)',
-    border: '1px solid rgba(255,255,255,0.1)',
+    fontSize: 17,
+    marginBottom: 14,
+    borderRadius: 22,
+    boxShadow: '0 6px 25px rgba(123, 44, 191, 0.18)',
+    border: '1px solid rgba(255,255,255,0.15)',
+    userSelect: 'text',
   },
   user: {
     background: 'linear-gradient(145deg, #7b2cbf 0%, #9d4edd 100%)',
     alignSelf: 'flex-end',
     color: '#f8f0ff',
     textAlign: 'right',
-    borderRadius: '15px 15px 0 15px',
-    boxShadow: '0 4px 15px rgba(123, 44, 191, 0.4)',
-    border: '1px solid rgba(255,255,255,0.2)',
+    borderRadius: '22px 22px 5px 22px',
+    boxShadow: '0 6px 25px rgba(123, 44, 191, 0.5)',
+    border: '1px solid rgba(255,255,255,0.25)',
   },
   bot: {
     background: 'linear-gradient(145deg, #10002b 0%, #5a189a 100%)',
     alignSelf: 'flex-start',
     color: '#f8f0ff',
     textAlign: 'left',
-    borderRadius: '15px 15px 15px 0',
-    boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
-    border: '1px solid rgba(199,125,255,0.3)',
+    borderRadius: '22px 22px 22px 5px',
+    boxShadow: '0 6px 25px rgba(0,0,0,0.4)',
+    border: '1px solid rgba(199,125,255,0.4)',
   },
   typing: {
     fontStyle: 'italic',
-    opacity: 0.7,
+    opacity: 0.75,
   },
   interim: {
     opacity: 0.7,
@@ -78,43 +80,51 @@ const styles = {
     color: '#c77dff',
   },
   micWrapper: {
-    position: 'fixed',
-    bottom: 20,
-    left: '50%',
-    transform: 'translateX(-50%)',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'column',
-    zIndex: 1000,
-    width: 120,
-    height: 120,
-    borderRadius: '50%',
-    background: 'rgba(123,44,191,0.1)',
-    boxShadow: '0 0 20px rgba(123,44,191,0.3)',
-  },
+  position: 'fixed',
+  // padding: '0 0 0 200px',
+  bottom: 70,
+  left: '55%',
+  // transform: 'translateX(-50%)',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  flexDirection: 'column',
+  zIndex: 1100,
+  width: 90,
+  height: 90,
+  borderRadius: '50%',
+  background: 'rgba(123,44,191,0.12)',
+  boxShadow: '0 0 35px rgba(123,44,191,0.5)',
+  backdropFilter: 'blur(8px)',
+  transition: 'all 0.3s ease-in-out',
+},
   micButton: (isListening) => ({
-    background: isListening ? 'rgba(123,44,191,0.3)' : 'rgba(123,44,191,0.2)',
+    background: isListening
+      ? 'rgba(199,125,255,0.4)'
+      : 'rgba(123,44,191,0.25)',
     border: 'none',
     cursor: 'pointer',
     outline: 'none',
     padding: 0,
-    width: 100,
-    height: 100,
+    width: 80,
+    height: 80,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     transition: 'all 0.3s ease-in-out',
     borderRadius: '50%',
     boxShadow: isListening
-      ? '0 0 20px rgba(199,125,255,0.6)'
-      : '0 0 15px rgba(123,44,191,0.4)',
+      ? '0 0 30px rgba(199,125,255,0.8)'
+      : '0 0 20px rgba(123,44,191,0.5)',
+    filter: isListening ? 'drop-shadow(0 0 15px #c77dff)' : 'none',
   }),
   micImg: {
-    width: '120%',
-    height: '120%',
+    width: '55%',
+    height: '55%',
     borderRadius: '50%',
-    objectFit: 'cover',
+    objectFit: 'contain',
+    userSelect: 'none',
+    pointerEvents: 'none',
   },
 };
 
@@ -297,11 +307,15 @@ const Voicebot = () => {
             onClick={toggleListening}
             aria-pressed={isListening}
             aria-label={isListening ? 'Stop listening' : 'Start voice input'}
-            title={isListening ? 'Listening...' : 'Click microphone to start listening'}
+            title={isListening ? 'Listening...' : 'Click microphone to speak'}
             style={styles.micButton(isListening)}
-            disabled={!isSpeechSupported}
           >
-            <img src={''} alt="Mic icon" style={styles.micImg} />
+            <img
+              src="https://img.icons8.com/ios-filled/100/ffffff/microphone.png"
+              alt="Microphone icon"
+              style={styles.micImg}
+              draggable={false}
+            />
           </button>
         </div>
       </main>
