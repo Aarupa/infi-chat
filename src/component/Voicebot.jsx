@@ -1,11 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 
 const styles = {
-  voicebotContainer: {
+  container: {
     fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-    background: 'linear-gradient(135deg, #f8f0ff 0%, #5a189a 100%)',
-    margin: 0,
-    padding: '0 0 0px 0',
+    background: '#fff',
+    padding: '0',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
@@ -15,22 +14,14 @@ const styles = {
     position: 'relative',
     color: '#f8f0ff',
   },
-  header: {
-    fontWeight: '700',
-    textAlign: 'center',
-    margin: '20px 0 20px 0',
-    fontSize: '2.5rem',
-    textShadow: '0 0 15px #c77dff',
-    letterSpacing: '1.5px',
-  },
   chatContainer: {
     display: 'flex',
     flexDirection: 'column',
-    maxWidth: 800,
     width: '90%',
+    maxWidth: 800,
     margin: '0 auto',
     background: 'rgba(90, 24, 154, 0.85)',
-    padding: 32,
+    padding: '32px',
     borderRadius: 20,
     height: '60vh',
     marginBottom: '40px',
@@ -50,13 +41,11 @@ const styles = {
     borderRadius: 22,
     boxShadow: '0 6px 25px rgba(123, 44, 191, 0.18)',
     border: '1px solid rgba(255,255,255,0.15)',
-    userSelect: 'text',
   },
   user: {
     background: 'linear-gradient(145deg, #7b2cbf 0%, #9d4edd 100%)',
     alignSelf: 'flex-end',
     color: '#f8f0ff',
-    textAlign: 'right',
     borderRadius: '22px 22px 5px 22px',
     boxShadow: '0 6px 25px rgba(123, 44, 191, 0.5)',
     border: '1px solid rgba(255,255,255,0.25)',
@@ -65,7 +54,6 @@ const styles = {
     background: 'linear-gradient(145deg, #10002b 0%, #5a189a 100%)',
     alignSelf: 'flex-start',
     color: '#f8f0ff',
-    textAlign: 'left',
     borderRadius: '22px 22px 22px 5px',
     boxShadow: '0 6px 25px rgba(0,0,0,0.4)',
     border: '1px solid rgba(199,125,255,0.4)',
@@ -79,62 +67,99 @@ const styles = {
     fontStyle: 'italic',
     color: '#c77dff',
   },
-  micWrapper: {
-  position: 'fixed',
-  // padding: '0 0 0 200px',
-  bottom: 70,
-  left: '55%',
-  // transform: 'translateX(-50%)',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  flexDirection: 'column',
-  zIndex: 1100,
-  width: 90,
-  height: 90,
-  borderRadius: '50%',
-  background: 'rgba(123,44,191,0.12)',
-  boxShadow: '0 0 35px rgba(123,44,191,0.5)',
-  backdropFilter: 'blur(8px)',
-  transition: 'all 0.3s ease-in-out',
-},
+  inputContainer: {
+    position: 'fixed',
+    bottom: 70,
+    left: '50%',
+    transform: 'translateX(-50%)',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '20px',
+    width: '90%',
+    maxWidth: 800,
+  },
+  inputWrapper: {
+    display: 'flex',
+    width: '100%',
+    gap: '10px',
+  },
+  textInput: {
+    flex: 1,
+    padding: '15px 20px',
+    borderRadius: '50px',
+    border: '1px solid rgba(199, 125, 255, 0.4)',
+    background: 'rgba(90, 24, 154, 0.2)',
+    color: '#f8f0ff',
+    fontSize: '16px',
+    outline: 'none',
+    boxShadow: '0 4px 20px rgba(123, 44, 191, 0.2)',
+    backdropFilter: 'blur(8px)',
+  },
+  sendButton: {
+    padding: '15px 25px',
+    borderRadius: '50px',
+    background: 'linear-gradient(145deg, #7b2cbf 0%, #9d4edd 100%)',
+    color: '#f8f0ff',
+    border: 'none',
+    cursor: 'pointer',
+    fontSize: '16px',
+    fontWeight: '600',
+    boxShadow: '0 4px 20px rgba(123, 44, 191, 0.5)',
+    transition: 'all 0.2s ease',
+  },
   micButton: (isListening) => ({
+    width: '60px',
+    height: '60px',
+    borderRadius: '50%',
     background: isListening
       ? 'rgba(199,125,255,0.4)'
       : 'rgba(123,44,191,0.25)',
     border: 'none',
     cursor: 'pointer',
-    outline: 'none',
-    padding: 0,
-    width: 80,
-    height: 80,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    transition: 'all 0.3s ease-in-out',
-    borderRadius: '50%',
     boxShadow: isListening
       ? '0 0 30px rgba(199,125,255,0.8)'
       : '0 0 20px rgba(123,44,191,0.5)',
-    filter: isListening ? 'drop-shadow(0 0 15px #c77dff)' : 'none',
+    transition: 'all 0.3s ease',
   }),
   micImg: {
     width: '55%',
     height: '55%',
-    borderRadius: '50%',
     objectFit: 'contain',
-    userSelect: 'none',
-    pointerEvents: 'none',
   },
+  modeToggle: {
+    display: 'flex',
+    background: 'rgba(90, 24, 154, 0.2)',
+    borderRadius: '50px',
+    padding: '5px',
+    backdropFilter: 'blur(8px)',
+  },
+  toggleButton: (active) => ({
+    padding: '10px 20px',
+    borderRadius: '50px',
+    background: active ? 'rgba(123, 44, 191, 0.5)' : 'transparent',
+    color: '#f8f0ff',
+    border: 'none',
+    cursor: 'pointer',
+    fontWeight: '600',
+    transition: 'all 0.2s ease',
+  }),
 };
 
 const Voicebot = () => {
   const [messages, setMessages] = useState([]);
+  const [inputText, setInputText] = useState('');
   const [isListening, setIsListening] = useState(false);
   const [interimTranscript, setInterimTranscript] = useState('');
+  const [inputMode, setInputMode] = useState('voice'); // 'voice' or 'text'
   const chatContainerRef = useRef(null);
+  const inputRef = useRef(null);
   const recognitionRef = useRef(null);
 
+  // Initialize speech recognition
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
@@ -172,7 +197,7 @@ const Voicebot = () => {
 
       recognitionRef.current = recognition;
     } else {
-      alert("Speech Recognition not supported in this browser.");
+      addMessage("Speech Recognition is not supported in your browser.", 'bot');
     }
 
     return () => {
@@ -180,9 +205,17 @@ const Voicebot = () => {
     };
   }, []);
 
+  // Auto-scroll chat to bottom
   useEffect(() => {
     scrollChatToBottom();
   }, [messages, interimTranscript]);
+
+  // Focus text input when in text mode
+  useEffect(() => {
+    if (inputMode === 'text' && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [inputMode]);
 
   const addMessage = (text, sender, isTyping = false) => {
     const newMessage = {
@@ -211,15 +244,17 @@ const Voicebot = () => {
 
   const botRespond = async (message) => {
     const typingId = Date.now();
-    addMessage('', 'bot', true);
+    addMessage('Typing...', 'bot', true);
 
-    await new Promise(resolve => setTimeout(resolve, 500));
+    // Simulate processing delay
+    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
 
     const responseText = getBotResponse(message);
 
     // Remove typing indicator
     setMessages(prev => prev.filter(msg => msg.id !== typingId));
 
+    // Add response with typing effect
     const responseId = Date.now();
     setMessages(prev => [...prev, { id: responseId, text: '', sender: 'bot' }]);
 
@@ -234,7 +269,9 @@ const Voicebot = () => {
         i++;
       } else {
         clearInterval(interval);
-        speakText(responseText);
+        if (inputMode === 'voice') {
+          speakText(responseText);
+        }
       }
     }, 30);
   };
@@ -242,11 +279,14 @@ const Voicebot = () => {
   const getBotResponse = (input) => {
     const text = input.toLowerCase();
     if (text.includes('hello') || text.includes('hi')) return "Hello! How can I assist you today?";
-    if (text.includes('how are you')) return "I'm just code, but I'm here to help you!";
-    if (text.includes('your name')) return "I'm a Voicebot inspired by ChatGPT.";
-    if (text.includes('time')) return `Current time is ${new Date().toLocaleTimeString()}.`;
-    if (text.includes('thank')) return "You're welcome!";
-    return "Sorry, I didn't understand that. Could you please try again?";
+    if (text.includes('how are you')) return "I'm just code, but I'm functioning well! How about you?";
+    if (text.includes('your name')) return "I'm Infi-Chat, your AI assistant.";
+    if (text.includes('time')) return `The current time is ${new Date().toLocaleTimeString()}.`;
+    if (text.includes('date')) return `Today is ${new Date().toLocaleDateString()}.`;
+    if (text.includes('thank')) return "You're welcome! Is there anything else I can help with?";
+    if (text.includes('mode') || text.includes('switch')) return `You're currently in ${inputMode} mode. Use the buttons above to switch.`;
+    if (text.includes('help')) return "I can answer questions, tell you the time, or just chat. Try asking me something!";
+    return "I'm not sure I understand. Could you rephrase that?";
   };
 
   const speakText = (text) => {
@@ -258,67 +298,96 @@ const Voicebot = () => {
 
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'en-US';
+    utterance.rate = 1;
+    utterance.pitch = 1;
     window.speechSynthesis.speak(utterance);
   };
 
   const submitMessage = async (message) => {
     if (!message.trim()) return;
     addMessage(message, 'user');
+    setInputText('');
     await botRespond(message);
   };
 
-  const isSpeechSupported = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+  const handleTextSubmit = (e) => {
+    e.preventDefault();
+    submitMessage(inputText);
+  };
+
+  const toggleInputMode = (mode) => {
+    setInputMode(mode);
+    if (isListening && mode === 'text') {
+      recognitionRef.current.stop();
+    }
+  };
 
   return (
-    <div style={styles.voicebotContainer}>
-      <header style={styles.header}>Voice-based Infi-chat</header>
-      <main style={{ width: '100%' }}>
-        <div
-          style={styles.chatContainer}
-          ref={chatContainerRef}
-          role="log"
-          aria-live="polite"
-          aria-relevant="additions"
-          aria-label="Conversation Messages"
-        >
-          {messages.map((msg) => (
-            <div
-              key={msg.id}
-              style={{
-                ...styles.message,
-                ...(msg.sender === 'user' ? styles.user : styles.bot),
-                ...(msg.isTyping ? styles.typing : {}),
-              }}
-            >
-              {msg.text}
-            </div>
-          ))}
-          {interimTranscript && (
-            <div style={{ ...styles.message, ...styles.user, ...styles.interim }}>
-              {interimTranscript}…
-            </div>
-          )}
+    <div style={styles.container}>
+      <div style={styles.chatContainer} ref={chatContainerRef}>
+        {messages.map((msg) => (
+          <div
+            key={msg.id}
+            style={{
+              ...styles.message,
+              ...(msg.sender === 'user' ? styles.user : styles.bot),
+              ...(msg.isTyping ? styles.typing : {}),
+            }}
+          >
+            {msg.text}
+          </div>
+        ))}
+        {interimTranscript && (
+          <div style={{ ...styles.message, ...styles.user, ...styles.interim }}>
+            {interimTranscript}…
+          </div>
+        )}
+      </div>
+
+      <div style={styles.inputContainer}>
+        <div style={styles.modeToggle}>
+          <button
+            style={styles.toggleButton(inputMode === 'voice')}
+            onClick={() => toggleInputMode('voice')}
+          >
+            Voice Mode
+          </button>
+          <button
+            style={styles.toggleButton(inputMode === 'text')}
+            onClick={() => toggleInputMode('text')}
+          >
+            Text Mode
+          </button>
         </div>
 
-        <div style={styles.micWrapper} aria-label="Voice input controls">
+        {inputMode === 'text' ? (
+          <form style={styles.inputWrapper} onSubmit={handleTextSubmit}>
+            <input
+              type="text"
+              value={inputText}
+              onChange={(e) => setInputText(e.target.value)}
+              placeholder="Type your message..."
+              style={styles.textInput}
+              ref={inputRef}
+            />
+            <button type="submit" style={styles.sendButton}>
+              Send
+            </button>
+          </form>
+        ) : (
           <button
-            type="button"
-            id="mic-button"
             onClick={toggleListening}
-            aria-pressed={isListening}
-            aria-label={isListening ? 'Stop listening' : 'Start voice input'}
-            title={isListening ? 'Listening...' : 'Click microphone to speak'}
             style={styles.micButton(isListening)}
+            aria-label={isListening ? 'Stop listening' : 'Start listening'}
           >
             <img
               src="https://img.icons8.com/ios-filled/100/ffffff/microphone.png"
-              alt="Microphone icon"
+              alt="Microphone"
               style={styles.micImg}
-              draggable={false}
             />
           </button>
-        </div>
-      </main>
+        )}
+      </div>
     </div>
   );
 };

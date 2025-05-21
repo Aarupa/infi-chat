@@ -30,7 +30,7 @@ const GmttBot = () => {
         background: '#e8f5e9',
         borderRadius: 12,
         padding: 24,
-        maxWidth: 500,
+        maxWidth: 900,
         margin: '40px auto',
         boxShadow: '0 2px 12px #a5d6a7',
         color: '#1b5e20',
@@ -40,7 +40,7 @@ const GmttBot = () => {
       <h2 style={{ color: '#388e3c', textAlign: 'center' }}>GMTT Bot</h2>
       <div
         style={{
-          minHeight: 200,
+          minHeight: 550,
           maxHeight: 300,
           overflowY: 'auto',
           background: '#c8e6c9',
