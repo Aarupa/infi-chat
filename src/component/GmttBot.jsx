@@ -1,10 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axiosInstance from '../utils/axiosIntance';
-
 const styles = {
   container: {
     fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-    background: '#fff',
+    background: '#f0fff4',
     padding: '0',
     display: 'flex',
     flexDirection: 'column',
@@ -13,7 +12,7 @@ const styles = {
     height: '100vh',
     overflow: 'hidden',
     position: 'relative',
-    color: '#f8f0ff',
+    color: '#1b4332',
     paddingTop: '40px',
   },
   chatContainer: {
@@ -21,13 +20,13 @@ const styles = {
     flexDirection: 'column',
     width: '90%',
     maxWidth: 800,
-    background: 'rgba(90, 24, 154, 0.85)',
+    background: 'rgba(38, 165, 48, 0.75)',
     padding: '32px',
     borderRadius: 20,
     height: '65vh',
     overflowY: 'auto',
-    border: '1px solid rgba(199, 125, 255, 0.4)',
-    boxShadow: '0 8px 40px rgba(123, 44, 191, 0.3)',
+    border: '1px solid rgba(88, 140, 102, 0.4)',
+    boxShadow: '0 8px 40px rgba(88, 140, 102, 0.3)',
     backdropFilter: 'blur(20px)',
     transition: 'all 0.4s ease-in-out',
   },
@@ -39,24 +38,24 @@ const styles = {
     fontSize: 17,
     marginBottom: 14,
     borderRadius: 22,
-    boxShadow: '0 6px 25px rgba(123, 44, 191, 0.18)',
-    border: '1px solid rgba(255,255,255,0.15)',
+    boxShadow: '0 6px 25px rgba(88, 140, 102, 0.18)',
+    border: '1px solid rgba(0,0,0,0.1)',
   },
   user: {
-    background: 'linear-gradient(145deg, #7b2cbf 0%, #9d4edd 100%)',
+    background: 'linear-gradient(145deg, #81c784, #a5d6a7)',
     alignSelf: 'flex-end',
-    color: '#f8f0ff',
+    color: '#1b4332',
     borderRadius: '22px 22px 5px 22px',
-    boxShadow: '0 6px 25px rgba(123, 44, 191, 0.5)',
-    border: '1px solid rgba(255,255,255,0.25)',
+    boxShadow: '0 6px 25px rgba(88, 140, 102, 0.5)',
+    border: '1px solid rgba(0,0,0,0.1)',
   },
   bot: {
-    background: 'linear-gradient(145deg, #10002b 0%, #5a189a 100%)',
+    background: 'linear-gradient(145deg, #b2f2bb, #d8f5e0)',
     alignSelf: 'flex-start',
-    color: '#f8f0ff',
+    color: '#1b4332',
     borderRadius: '22px 22px 22px 5px',
-    boxShadow: '0 6px 25px rgba(0,0,0,0.4)',
-    border: '1px solid rgba(199,125,255,0.4)',
+    boxShadow: '0 6px 25px rgba(0,0,0,0.2)',
+    border: '1px solid rgba(0,0,0,0.1)',
   },
   typing: {
     fontStyle: 'italic',
@@ -65,7 +64,7 @@ const styles = {
   interim: {
     opacity: 0.7,
     fontStyle: 'italic',
-    color: '#c77dff',
+    color: '#4caf50',
   },
   inputContainer: {
     display: 'flex',
@@ -85,39 +84,39 @@ const styles = {
     flex: 1,
     padding: '15px 20px',
     borderRadius: '50px',
-    border: '1px solid rgba(199, 125, 255, 0.4)',
-    background: 'rgba(90, 24, 154, 0.2)',
-    color: '#f8f0ff',
+    border: '1px solid rgba(88, 140, 102, 0.4)',
+    background: 'rgba(200, 255, 210, 0.4)',
+    color: '#1b4332',
     fontSize: '16px',
     outline: 'none',
-    boxShadow: '0 4px 20px rgba(123, 44, 191, 0.2)',
+    boxShadow: '0 4px 20px rgba(88, 140, 102, 0.2)',
     backdropFilter: 'blur(8px)',
   },
   sendButton: {
     padding: '15px 25px',
     borderRadius: '50px',
-    background: 'linear-gradient(145deg, #7b2cbf 0%, #9d4edd 100%)',
-    color: '#f8f0ff',
+    background: 'linear-gradient(145deg,rgb(29, 177, 36), #81c784)',
+    color: '#fff',
     border: 'none',
     cursor: 'pointer',
     fontSize: '16px',
     fontWeight: '600',
-    boxShadow: '0 4px 20px rgba(123, 44, 191, 0.5)',
+    boxShadow: '0 4px 20px rgba(88, 140, 102, 0.4)',
     transition: 'all 0.2s ease',
   },
   micButton: (isListening) => ({
     width: '60px',
     height: '60px',
     borderRadius: '50%',
-    background: isListening ? 'rgba(199,125,255,0.4)' : 'rgba(123,44,191,0.25)',
+    background: isListening ? 'rgba(88,140,102,0.5)' : 'rgba(173, 232, 178, 0.5)',
     border: 'none',
     cursor: 'pointer',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     boxShadow: isListening
-      ? '0 0 30px rgba(199,125,255,0.8)'
-      : '0 0 20px rgba(123,44,191,0.5)',
+      ? '0 0 30px rgba(76,175,80,0.6)'
+      : '0 0 20px rgba(88,140,102,0.4)',
     transition: 'all 0.3s ease',
   }),
   micImg: {
@@ -127,18 +126,19 @@ const styles = {
   },
   modeToggle: {
     display: 'flex',
-    background: 'rgba(90, 24, 154, 0.2)',
+    background: 'rgba(200, 255, 210, 0.7)',
     borderRadius: '50px',
     padding: '5px',
     backdropFilter: 'blur(8px)',
     justifyContent: 'center',
     marginTop: '20px',
+    boxShadow: '0 2px 8px rgba(88,140,102,0.2)',
   },
   toggleButton: (active) => ({
     padding: '10px 20px',
     borderRadius: '50px',
-    background: active ? 'rgba(123, 44, 191, 0.5)' : 'transparent',
-    color: '#f8f0ff',
+    background: active ? 'rgba(3, 158, 11, 0.6)' : 'transparent',
+    color: '#1b4332',
     border: 'none',
     cursor: 'pointer',
     fontWeight: '600',
@@ -146,7 +146,7 @@ const styles = {
   }),
 };
 
-const Voicebot = () => {
+const GmttBot = () => {
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
   const [isListening, setIsListening] = useState(false);
@@ -452,4 +452,5 @@ const speakText = (text, langCode = 'en', onEnd) => {
     </div>
   );
 };
-export default Voicebot;
+
+export default GmttBot;

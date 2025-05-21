@@ -94,20 +94,6 @@ body {
 }
 
 
-/* Page-specific full-width backgrounds */
-
-.login-page-background,
-.register-page-background {
-    width: 100%;
-    min-height: calc(100vh - 64px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
-    padding: 20px;
-}
-
-
 /* Centered form containers */
 
 .login-form-container,
@@ -218,3 +204,5 @@ body {
         text-align: center;
     }
 }
+
+
