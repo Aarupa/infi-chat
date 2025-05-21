@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import axiosInstance from '../utils/axiosIntance';
 
 const styles = {
   container: {
@@ -7,24 +8,23 @@ const styles = {
     padding: '0',
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     height: '100vh',
     overflow: 'hidden',
     position: 'relative',
     color: '#f8f0ff',
+    paddingTop: '40px',
   },
   chatContainer: {
     display: 'flex',
     flexDirection: 'column',
     width: '90%',
     maxWidth: 800,
-    margin: '0 auto',
     background: 'rgba(90, 24, 154, 0.85)',
     padding: '32px',
     borderRadius: 20,
-    height: '60vh',
-    marginBottom: '40px',
+    height: '65vh',
     overflowY: 'auto',
     border: '1px solid rgba(199, 125, 255, 0.4)',
     boxShadow: '0 8px 40px rgba(123, 44, 191, 0.3)',
@@ -68,16 +68,13 @@ const styles = {
     color: '#c77dff',
   },
   inputContainer: {
-    position: 'fixed',
-    bottom: 70,
-    left: '50%',
-    transform: 'translateX(-50%)',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    gap: '20px',
+    gap: '16px',
     width: '90%',
     maxWidth: 800,
+    marginTop: '20px',
   },
   inputWrapper: {
     display: 'flex',
@@ -112,9 +109,7 @@ const styles = {
     width: '60px',
     height: '60px',
     borderRadius: '50%',
-    background: isListening
-      ? 'rgba(199,125,255,0.4)'
-      : 'rgba(123,44,191,0.25)',
+    background: isListening ? 'rgba(199,125,255,0.4)' : 'rgba(123,44,191,0.25)',
     border: 'none',
     cursor: 'pointer',
     display: 'flex',
@@ -136,6 +131,8 @@ const styles = {
     borderRadius: '50px',
     padding: '5px',
     backdropFilter: 'blur(8px)',
+    justifyContent: 'center',
+    marginTop: '20px',
   },
   toggleButton: (active) => ({
     padding: '10px 20px',
@@ -154,161 +151,224 @@ const Voicebot = () => {
   const [inputText, setInputText] = useState('');
   const [isListening, setIsListening] = useState(false);
   const [interimTranscript, setInterimTranscript] = useState('');
-  const [inputMode, setInputMode] = useState('voice'); // 'voice' or 'text'
+  const [inputMode, setInputMode] = useState('voice');
+  const [shouldContinueListening, setShouldContinueListening] = useState(false);
+
   const chatContainerRef = useRef(null);
   const inputRef = useRef(null);
   const recognitionRef = useRef(null);
+  const isRespondingRef = useRef(false);
 
-  // Initialize speech recognition
+
   useEffect(() => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (SpeechRecognition) {
-      const recognition = new SpeechRecognition();
-      recognition.lang = 'en-US';
-      recognition.interimResults = true;
-      recognition.maxAlternatives = 1;
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (SpeechRecognition) {
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 1;
 
-      recognition.onstart = () => setIsListening(true);
-      recognition.onend = () => setIsListening(false);
-      recognition.onerror = (e) => {
-        setIsListening(false);
-        addMessage(`Error: ${e.error}`, 'bot');
-      };
+    recognition.onstart = () => setIsListening(true);
 
-      recognition.onresult = (event) => {
-        let interim = '';
-        let finalTranscript = '';
-
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          if (event.results[i].isFinal) {
-            finalTranscript += event.results[i][0].transcript;
-          } else {
-            interim += event.results[i][0].transcript;
-          }
-        }
-
-        setInterimTranscript(interim);
-
-        if (finalTranscript) {
-          setInterimTranscript('');
-          submitMessage(finalTranscript.trim());
-        }
-      };
-
-      recognitionRef.current = recognition;
-    } else {
-      addMessage("Speech Recognition is not supported in your browser.", 'bot');
-    }
-
-    return () => {
-      if (recognitionRef.current) recognitionRef.current.stop();
+    recognition.onend = () => {
+      setIsListening(false);
+      if (shouldContinueListening && !isRespondingRef.current) {
+        recognition.start(); // Restart only if bot is not speaking
+      }
     };
-  }, []);
 
-  // Auto-scroll chat to bottom
+   recognition.onerror = (e) => {
+  setIsListening(false);
+  if (e.error === 'no-speech') {
+    // Ignore 'no-speech' error silently, no message shown
+    return;
+  }
+  addMessage(`Error: ${e.error}`, 'bot');
+};
+
+    recognition.onresult = (event) => {
+      let interim = '';
+      let finalTranscript = '';
+
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        if (event.results[i].isFinal) {
+          finalTranscript += event.results[i][0].transcript;
+        } else {
+          interim += event.results[i][0].transcript;
+        }
+      }
+
+      setInterimTranscript(interim);
+
+      if (finalTranscript) {
+        setInterimTranscript('');
+        const lower = finalTranscript.trim().toLowerCase();
+        if (lower.includes('bye') || lower.includes('exit')) {
+          setShouldContinueListening(false);
+          recognition.stop();
+        }
+        recognition.stop(); // Pause mic while bot is responding
+        submitMessage(finalTranscript.trim());
+      }
+    };
+
+    recognitionRef.current = recognition;
+  } else {
+    addMessage("Speech Recognition is not supported in your browser.", 'bot');
+  }
+
+  return () => {
+    if (recognitionRef.current) recognitionRef.current.stop();
+  };
+}, [shouldContinueListening]);
+
+
   useEffect(() => {
-    scrollChatToBottom();
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
   }, [messages, interimTranscript]);
 
-  // Focus text input when in text mode
   useEffect(() => {
     if (inputMode === 'text' && inputRef.current) {
       inputRef.current.focus();
     }
   }, [inputMode]);
 
-  const addMessage = (text, sender, isTyping = false) => {
-    const newMessage = {
-      id: Date.now(),
-      text,
-      sender,
-      isTyping,
-    };
-    setMessages(prev => [...prev, newMessage]);
-  };
 
-  const scrollChatToBottom = () => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-    }
+
+
+  const addMessage = (text, sender, isTyping = false) => {
+    const newMessage = { id: Date.now(), text, sender, isTyping };
+    setMessages(prev => [...prev, newMessage]);
   };
 
   const toggleListening = () => {
     if (!recognitionRef.current) return;
     if (isListening) {
+      setShouldContinueListening(false);
       recognitionRef.current.stop();
     } else {
+      setShouldContinueListening(true);
       recognitionRef.current.start();
     }
   };
 
   const botRespond = async (message) => {
-    const typingId = Date.now();
-    addMessage('Typing...', 'bot', true);
+  const typingId = Date.now();
+  isRespondingRef.current = true; // Block mic restart
+  addMessage('Typing...', 'bot', true);
 
-    // Simulate processing delay
-    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
+  try {
+    const response = await axiosInstance.post('/api/indeed-chat/', {
+      query: message,
+      chatbot_type: 'gmtt',
+    });
 
-    const responseText = getBotResponse(message);
+    let botReply = response.data?.response || "";
 
-    // Remove typing indicator
+    // Friendly fallback if bot reply is empty or just whitespace
+    if (!botReply.trim()) {
+      botReply = "Sorry, I didn't quite catch that. Could you please say it again?";
+    }
+
     setMessages(prev => prev.filter(msg => msg.id !== typingId));
 
-    // Add response with typing effect
     const responseId = Date.now();
     setMessages(prev => [...prev, { id: responseId, text: '', sender: 'bot' }]);
 
     let i = 0;
     const interval = setInterval(() => {
-      if (i < responseText.length) {
+      if (i < botReply.length) {
         setMessages(prev => prev.map(msg =>
           msg.id === responseId
-            ? { ...msg, text: msg.text + responseText.charAt(i) }
+            ? { ...msg, text: msg.text + botReply.charAt(i) }
             : msg
         ));
         i++;
       } else {
         clearInterval(interval);
-        if (inputMode === 'voice') {
-          speakText(responseText);
-        }
+        speakText(botReply, 'en', () => {
+          isRespondingRef.current = false;
+          if (shouldContinueListening && recognitionRef.current) {
+            recognitionRef.current.start();
+          }
+
+        });
       }
     }, 30);
+
+  } catch (error) {
+    setMessages(prev => prev.filter(msg => msg.id !== typingId));
+    addMessage("Sorry, something went wrong with the server.", 'bot');
+    console.error('API Error:', error);
+    isRespondingRef.current = false;
+  }
+};
+
+
+  const supportedLanguages = {
+  en: 'en-US',   // English (US)
+  hi: 'hi-IN',   // Hindi (India)
+  mr: 'mr-IN',   // Marathi (India)
+};
+
+const speakText = (text, langCode = 'en', onEnd) => {
+  if (!('speechSynthesis' in window)) {
+    onEnd?.();
+    return;
+  }
+  if (window.speechSynthesis.speaking) {
+    window.speechSynthesis.cancel();
+  }
+
+  const utterance = new SpeechSynthesisUtterance(text);
+  const lang = supportedLanguages[langCode] || 'en-US';
+  utterance.lang = lang;
+
+  const voices = window.speechSynthesis.getVoices();
+
+  // Filter voices for matching language prefix and female voice by name hints
+  const femaleVoices = voices.filter(voice => {
+    const langMatch = voice.lang.toLowerCase().startsWith(lang.toLowerCase().slice(0,2));
+    const isFemale = /female|woman|girl|zira|susan|amelia|google/i.test(voice.name);
+    return langMatch && isFemale;
+  });
+
+  // Pick first female voice available, else fallback to first voice
+  const selectedVoice = femaleVoices.length ? femaleVoices[0] : (voices[0] || null);
+
+  if (selectedVoice) {
+    utterance.voice = selectedVoice;
+  }
+
+  utterance.rate = 1;
+  utterance.pitch = 1;
+
+  utterance.onend = () => {
+    onEnd?.();
   };
 
-  const getBotResponse = (input) => {
-    const text = input.toLowerCase();
-    if (text.includes('hello') || text.includes('hi')) return "Hello! How can I assist you today?";
-    if (text.includes('how are you')) return "I'm just code, but I'm functioning well! How about you?";
-    if (text.includes('your name')) return "I'm Infi-Chat, your AI assistant.";
-    if (text.includes('time')) return `The current time is ${new Date().toLocaleTimeString()}.`;
-    if (text.includes('date')) return `Today is ${new Date().toLocaleDateString()}.`;
-    if (text.includes('thank')) return "You're welcome! Is there anything else I can help with?";
-    if (text.includes('mode') || text.includes('switch')) return `You're currently in ${inputMode} mode. Use the buttons above to switch.`;
-    if (text.includes('help')) return "I can answer questions, tell you the time, or just chat. Try asking me something!";
-    return "I'm not sure I understand. Could you rephrase that?";
-  };
+  window.speechSynthesis.speak(utterance);
+};
 
-  const speakText = (text) => {
-    if (!('speechSynthesis' in window)) return;
 
-    if (window.speechSynthesis.speaking) {
-      window.speechSynthesis.cancel();
-    }
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'en-US';
-    utterance.rate = 1;
-    utterance.pitch = 1;
-    window.speechSynthesis.speak(utterance);
-  };
 
   const submitMessage = async (message) => {
-    if (!message.trim()) return;
-    addMessage(message, 'user');
-    setInputText('');
-    await botRespond(message);
-  };
+  if (!message.trim()) return;
+
+  // If speech synthesis is speaking, cancel it immediately on user input
+  if ('speechSynthesis' in window && window.speechSynthesis.speaking) {
+    window.speechSynthesis.cancel();
+  }
+
+  // Also unblock mic (in case it was waiting for bot to finish)
+  isRespondingRef.current = false;
+
+  addMessage(message, 'user');
+  setInputText('');
+  await botRespond(message);
+};
 
   const handleTextSubmit = (e) => {
     e.preventDefault();
@@ -318,6 +378,7 @@ const Voicebot = () => {
   const toggleInputMode = (mode) => {
     setInputMode(mode);
     if (isListening && mode === 'text') {
+      setShouldContinueListening(false);
       recognitionRef.current.stop();
     }
   };
@@ -345,21 +406,6 @@ const Voicebot = () => {
       </div>
 
       <div style={styles.inputContainer}>
-        <div style={styles.modeToggle}>
-          <button
-            style={styles.toggleButton(inputMode === 'voice')}
-            onClick={() => toggleInputMode('voice')}
-          >
-            Voice Mode
-          </button>
-          <button
-            style={styles.toggleButton(inputMode === 'text')}
-            onClick={() => toggleInputMode('text')}
-          >
-            Text Mode
-          </button>
-        </div>
-
         {inputMode === 'text' ? (
           <form style={styles.inputWrapper} onSubmit={handleTextSubmit}>
             <input
@@ -387,9 +433,23 @@ const Voicebot = () => {
             />
           </button>
         )}
+
+        <div style={styles.modeToggle}>
+          <button
+            style={styles.toggleButton(inputMode === 'voice')}
+            onClick={() => toggleInputMode('voice')}
+          >
+            Voice Mode
+          </button>
+          <button
+            style={styles.toggleButton(inputMode === 'text')}
+            onClick={() => toggleInputMode('text')}
+          >
+            Text Mode
+          </button>
+        </div>
       </div>
     </div>
   );
 };
-
 export default Voicebot;

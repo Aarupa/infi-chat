@@ -21,7 +21,7 @@ const VoiceSidebar = () => {
   })();
 
   const sidebarStyle = {
-    width: '250px',
+    // width: '250px',
     height: '100vh',
     // background: 'linear-gradient(135deg, #1e3a8a 0%, #111827 100%)',
      background: 'linear-gradient(135deg, #5a189a 0%, #10002b 100%)',
