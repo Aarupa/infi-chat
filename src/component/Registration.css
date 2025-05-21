@@ -24,8 +24,6 @@
     box-shadow: 0 0 0 2px rgba(123, 44, 191, 0.08);
 }
 
-/* ...existing code... */
-
 .ant-card {
     background: rgba(255,255,255,0.8) !important;
     border-radius: 18px !important;

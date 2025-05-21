@@ -57,6 +57,8 @@ body,
     object-fit: cover;
 }
 
+
+
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -97,30 +99,5 @@ body,
     .login-card {
         max-width: 100%;
     }
-}
-
-/* Match input border color with ContactUs */
-.ant-input,
-.ant-input-password,
-.ant-input-affix-wrapper {
-    border: 1.5px solid var(--primary-color) !important;
-    border-radius: 8px !important;
-    background: rgba(255, 255, 255, 0.85) !important;
-    font-size: 1.1rem;
-    color: var(--text-color);
-    transition: border-color 0.3s;
-}
-/* Remove double border for Ant Design inputs with prefix/suffix */
-.ant-input-affix-wrapper > .ant-input {
-    border: none !important;
-    box-shadow: none !important;
-    background: transparent !important;
-}
-
-.ant-input:focus,
-.ant-input-affix-wrapper-focused,
-.ant-input-password:focus {
-    border-color: var(--accent-color) !important;
-    box-shadow: 0 0 0 2px rgba(123, 44, 191, 0.08);
 }
 
