@@ -1,313 +1,310 @@
-import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
-import { FaBars, FaKeyboard, FaPaperPlane } from 'react-icons/fa';
-import './Voicebot.css'; // We'll create this CSS file with the same styles
+import React, { useState, useRef, useEffect } from 'react';
+// import micIcon from '../assets/mic_icon.png';
+
+const styles = {
+  voicebotContainer: {
+    fontFamily: 'Arial, sans-serif',
+    background: 'linear-gradient(135deg, #f8f0ff 0%, #5a189a 100%)',
+    margin: 0,
+    padding: 0,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100vh',
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  header: {
+    color: '#f8f0ff',
+    textAlign: 'center',
+    margin: '20px 0 10px 0',
+    fontSize: '2rem',
+    textShadow: '0 0 10px #c77dff',
+    letterSpacing: '1px',
+  },
+  chatContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    maxWidth: 800,
+    width: '100%',
+    margin: '0 auto',
+    background: 'rgba(90, 24, 154, 0.8)',
+    padding: 30,
+    borderRadius: 12,
+    height: '60vh',
+    overflowY: 'auto',
+    border: '1px solid rgba(199, 125, 255, 0.3)',
+    boxShadow: '0 4px 30px rgba(123, 44, 191, 0.2)',
+    backdropFilter: 'blur(10px)',
+    transition: 'all 0.3s ease-in-out',
+  },
+  message: {
+    padding: '12px 18px',
+    maxWidth: '75%',
+    lineHeight: 1.5,
+    wordWrap: 'break-word',
+    fontSize: 16,
+    marginBottom: 10,
+    borderRadius: 15,
+    boxShadow: '0 4px 15px rgba(123, 44, 191, 0.15)',
+    border: '1px solid rgba(255,255,255,0.1)',
+  },
+  user: {
+    background: 'linear-gradient(145deg, #7b2cbf 0%, #9d4edd 100%)',
+    alignSelf: 'flex-end',
+    color: '#f8f0ff',
+    textAlign: 'right',
+    borderRadius: '15px 15px 0 15px',
+    boxShadow: '0 4px 15px rgba(123, 44, 191, 0.4)',
+    border: '1px solid rgba(255,255,255,0.2)',
+  },
+  bot: {
+    background: 'linear-gradient(145deg, #10002b 0%, #5a189a 100%)',
+    alignSelf: 'flex-start',
+    color: '#f8f0ff',
+    textAlign: 'left',
+    borderRadius: '15px 15px 15px 0',
+    boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
+    border: '1px solid rgba(199,125,255,0.3)',
+  },
+  typing: {
+    fontStyle: 'italic',
+    opacity: 0.7,
+  },
+  interim: {
+    opacity: 0.7,
+    fontStyle: 'italic',
+    color: '#c77dff',
+  },
+  micWrapper: {
+    position: 'fixed',
+    bottom: 20,
+    left: '50%',
+    transform: 'translateX(-50%)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
+    zIndex: 1000,
+    width: 120,
+    height: 120,
+    borderRadius: '50%',
+    background: 'rgba(123,44,191,0.1)',
+    boxShadow: '0 0 20px rgba(123,44,191,0.3)',
+  },
+  micButton: (isListening) => ({
+    background: isListening ? 'rgba(123,44,191,0.3)' : 'rgba(123,44,191,0.2)',
+    border: 'none',
+    cursor: 'pointer',
+    outline: 'none',
+    padding: 0,
+    width: 100,
+    height: 100,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    transition: 'all 0.3s ease-in-out',
+    borderRadius: '50%',
+    boxShadow: isListening
+      ? '0 0 20px rgba(199,125,255,0.6)'
+      : '0 0 15px rgba(123,44,191,0.4)',
+  }),
+  micImg: {
+    width: '120%',
+    height: '120%',
+    borderRadius: '50%',
+    objectFit: 'cover',
+  },
+};
 
 const Voicebot = () => {
-  const [isListening, setIsListening] = useState(false);
-  const [isBotSpeaking, setIsBotSpeaking] = useState(false);
-  const [conversationActive, setConversationActive] = useState(false);
-  const [wakeWordDetected, setWakeWordDetected] = useState(false);
   const [messages, setMessages] = useState([]);
-  const [inputPrompt, setInputPrompt] = useState('');
-  const [showChat, setShowChat] = useState(false);
-  const [selectedVoice, setSelectedVoice] = useState(null);
-  
+  const [isListening, setIsListening] = useState(false);
+  const [interimTranscript, setInterimTranscript] = useState('');
+  const chatContainerRef = useRef(null);
   const recognitionRef = useRef(null);
-  const micContainerRef = useRef(null);
-  const micStatusRef = useRef(null);
-  const micBtnRef = useRef(null);
-  const chatWindowRef = useRef(null);
 
   useEffect(() => {
-    loadVoices();
-    initializeRecognition();
-    
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'en-US';
+      recognition.interimResults = true;
+      recognition.maxAlternatives = 1;
+
+      recognition.onstart = () => setIsListening(true);
+      recognition.onend = () => setIsListening(false);
+      recognition.onerror = (e) => {
+        setIsListening(false);
+        addMessage(`Error: ${e.error}`, 'bot');
+      };
+
+      recognition.onresult = (event) => {
+        let interim = '';
+        let finalTranscript = '';
+
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript;
+          } else {
+            interim += event.results[i][0].transcript;
+          }
+        }
+
+        setInterimTranscript(interim);
+
+        if (finalTranscript) {
+          setInterimTranscript('');
+          submitMessage(finalTranscript.trim());
+        }
+      };
+
+      recognitionRef.current = recognition;
+    } else {
+      alert("Speech Recognition not supported in this browser.");
+    }
+
     return () => {
-      if (recognitionRef.current) {
-        recognitionRef.current.stop();
-      }
-      window.speechSynthesis.cancel();
+      if (recognitionRef.current) recognitionRef.current.stop();
     };
   }, []);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    scrollChatToBottom();
+  }, [messages, interimTranscript]);
 
-  const loadVoices = () => {
-    const voices = window.speechSynthesis.getVoices();
-    const voice = voices.find(v => v.name.toLowerCase().includes('neerja'));
-    setSelectedVoice(voice || null);
+  const addMessage = (text, sender, isTyping = false) => {
+    const newMessage = {
+      id: Date.now(),
+      text,
+      sender,
+      isTyping,
+    };
+    setMessages(prev => [...prev, newMessage]);
   };
 
-  const initializeRecognition = () => {
-    if ('webkitSpeechRecognition' in window) {
-      recognitionRef.current = new window.webkitSpeechRecognition();
-      recognitionRef.current.lang = 'en-IN';
-      recognitionRef.current.interimResults = false;
-      recognitionRef.current.continuous = true;
-
-      recognitionRef.current.onstart = () => {
-        setIsListening(true);
-        if (micStatusRef.current) {
-          micStatusRef.current.textContent = 'Listening...';
-        }
-        
-        if (!wakeWordDetected) {
-          if (micStatusRef.current) {
-            micStatusRef.current.textContent = 'Hello! I am Infi';
-          }
-        }
-      };
-
-      recognitionRef.current.onresult = (event) => {
-        const transcript = event.results[event.results.length - 1][0].transcript.trim();
-        if (transcript) {
-          handleTranscript(transcript);
-        }
-      };
-
-      recognitionRef.current.onerror = (event) => {
-        console.error('Speech recognition error:', event.error);
-        setIsListening(false);
-      };
-
-      recognitionRef.current.onend = () => {
-        if (isListening && conversationActive) {
-          recognitionRef.current.start();
-        }
-      };
+  const scrollChatToBottom = () => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
   };
 
-  const handleTranscript = (transcript) => {
-    if (!wakeWordDetected) {
-      const wakeWords = [
-        "hi infi", "hi infee", "hi infy", "hi infie", "hi infey",
-        "hii infi", "hii infee", "hii infy", "hii infie", "hii infey",
-        "hello infi", "hello infee", "hello infy", "hello infie", "hello infey",
-        "helloo infi", "helloo infee", "helloo infy", "helloo infie", "helloo infey",
-        "hey infi", "hey infee", "hey infy", "hey infie", "hey infey",
-        "heyy infi", "heyy infee", "heyy infy", "heyy infie", "heyy infey",
-        "heya infi", "heya infee", "heya infy", "heya infie", "heya infey",
-        "yo infi", "yo infee", "yo infy", "yo infie", "yo infey",
-        "sup infi", "sup infee", "sup infy", "sup infie", "sup infey"
-      ];
-      
-      const foundWakeWord = wakeWords.some(word => transcript.toLowerCase().includes(word));
-      
-      if (foundWakeWord) {
-        setWakeWordDetected(true);
-        addBotMessage("Hello! How can I help you today?");
-        speakResponse("Hello! How can I help you today?");
-        setConversationActive(true);
-        if (micContainerRef.current) {
-          micContainerRef.current.classList.add('active');
-        }
-        return;
-      } else {
-        return;
-      }
-    }
-
-    addUserMessage(transcript);
-
-    if (["bye", "exit", "goodbye"].some(cmd => transcript.toLowerCase().includes(cmd))) {
-      handleExitCommand();
-      return;
-    }
-
-    sendChatRequest(transcript);
-  };
-
-  const sendChatRequest = async (prompt) => {
-    try {
-      const response = await axios.post('/api/chat/', { prompt, job: "general" });
-      addBotMessage(response.data.text);
-      speakResponse(response.data.text);
-    } catch (error) {
-      console.error(error);
-      addBotMessage("Something went wrong. Please try again.");
-    }
-  };
-
-  const speakResponse = (text) => {
-    window.speechSynthesis.cancel();
-
+  const toggleListening = () => {
+    if (!recognitionRef.current) return;
     if (isListening) {
       recognitionRef.current.stop();
-      setIsListening(false);
-    }
-
-    const speech = new SpeechSynthesisUtterance(text);
-    speech.lang = 'en-IN';
-
-    if (selectedVoice) {
-      speech.voice = selectedVoice;
-    }
-
-    speech.onstart = () => {
-      setIsBotSpeaking(true);
-    };
-
-    speech.onend = () => {
-      setIsBotSpeaking(false);
-      if (conversationActive && !isListening) {
-        setTimeout(() => {
-          try {
-            if (!isListening) {
-              recognitionRef.current.start();
-              setIsListening(true);
-            }
-          } catch (e) {
-            console.log("Recognition start error:", e);
-            setTimeout(() => {
-              if (!isListening) {
-                recognitionRef.current.start();
-                setIsListening(true);
-              }
-            }, 500);
-          }
-        }, 500);
-      }
-    };
-
-    window.speechSynthesis.speak(speech);
-  };
-
-  const addUserMessage = (text) => {
-    setMessages(prev => [...prev, { type: 'user', text }]);
-  };
-
-  const addBotMessage = (text) => {
-    setMessages(prev => [...prev, { type: 'bot', text }]);
-  };
-
-  const handleMicClick = () => {
-    if (!conversationActive) {
-      if (micContainerRef.current) {
-        micContainerRef.current.classList.add('active');
-      }
-      startVoiceRecognition(true);
-      setConversationActive(true);
-      setWakeWordDetected(true);
-      return;
-    }
-
-    if (isBotSpeaking) {
-      window.speechSynthesis.cancel();
-      setIsBotSpeaking(false);
-      startVoiceRecognition();
     } else {
-      if (micContainerRef.current) {
-        if (micContainerRef.current.classList.contains('active')) {
-          micContainerRef.current.classList.remove('active');
-          if (isListening) {
-            recognitionRef.current.stop();
-            setIsListening(false);
-          }
-        } else {
-          micContainerRef.current.classList.add('active');
-          startVoiceRecognition();
-        }
+      recognitionRef.current.start();
+    }
+  };
+
+  const botRespond = async (message) => {
+    const typingId = Date.now();
+    addMessage('', 'bot', true);
+
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    const responseText = getBotResponse(message);
+
+    // Remove typing indicator
+    setMessages(prev => prev.filter(msg => msg.id !== typingId));
+
+    const responseId = Date.now();
+    setMessages(prev => [...prev, { id: responseId, text: '', sender: 'bot' }]);
+
+    let i = 0;
+    const interval = setInterval(() => {
+      if (i < responseText.length) {
+        setMessages(prev => prev.map(msg =>
+          msg.id === responseId
+            ? { ...msg, text: msg.text + responseText.charAt(i) }
+            : msg
+        ));
+        i++;
+      } else {
+        clearInterval(interval);
+        speakText(responseText);
       }
-    }
+    }, 30);
   };
 
-  const startVoiceRecognition = (initialStart = false) => {
-    if (!('webkitSpeechRecognition' in window)) {
-      alert('Speech recognition is not supported in this browser.');
-      return;
-    }
-
-    if (isListening && !initialStart) {
-      recognitionRef.current.stop();
-      setIsListening(false);
-      return;
-    }
-
-    if (recognitionRef.current && isListening) {
-      recognitionRef.current.stop();
-      setIsListening(false);
-    }
-
-    recognitionRef.current.start();
+  const getBotResponse = (input) => {
+    const text = input.toLowerCase();
+    if (text.includes('hello') || text.includes('hi')) return "Hello! How can I assist you today?";
+    if (text.includes('how are you')) return "I'm just code, but I'm here to help you!";
+    if (text.includes('your name')) return "I'm a Voicebot inspired by ChatGPT.";
+    if (text.includes('time')) return `Current time is ${new Date().toLocaleTimeString()}.`;
+    if (text.includes('thank')) return "You're welcome!";
+    return "Sorry, I didn't understand that. Could you please try again?";
   };
 
-  const handleExitCommand = () => {
-    speakResponse("Ok bye! Have a good day!");
+  const speakText = (text) => {
+    if (!('speechSynthesis' in window)) return;
 
-    if (isListening) {
-      recognitionRef.current.stop();
-      setIsListening(false);
+    if (window.speechSynthesis.speaking) {
+      window.speechSynthesis.cancel();
     }
 
-    if (micContainerRef.current) {
-      micContainerRef.current.classList.remove('active');
-    }
-
-    setConversationActive(false);
-    setWakeWordDetected(false);
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US';
+    window.speechSynthesis.speak(utterance);
   };
 
-  const sendMessage = (e) => {
-    e.preventDefault();
-    if (!inputPrompt.trim()) return;
-
-    addUserMessage(inputPrompt);
-    setInputPrompt('');
-    sendChatRequest(inputPrompt);
+  const submitMessage = async (message) => {
+    if (!message.trim()) return;
+    addMessage(message, 'user');
+    await botRespond(message);
   };
 
-  const toggleChat = () => {
-    setShowChat(!showChat);
-  };
-
-  const scrollToBottom = () => {
-    if (chatWindowRef.current) {
-      chatWindowRef.current.scrollTop = chatWindowRef.current.scrollHeight;
-    }
-  };
+  const isSpeechSupported = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
 
   return (
-    <div className="chatbot-container">
-     
-      <button id="toggle-chat-btn" onClick={toggleChat}>
-        <FaKeyboard />
-      </button>
-      
-      <div className={`mic-container ${conversationActive ? 'active' : ''}`} ref={micContainerRef}>
-        <button id="mic-btn" onClick={handleMicClick} ref={micBtnRef}>
-          <img src="/static/assets/voicegif.gif" alt="Voice GIF" />
-        </button>
-        <div className="mic-status" ref={micStatusRef}></div>
-      </div>
-      
-      <div className={`chat-container ${showChat ? 'show' : ''}`}>
-        <h1>Chatbot</h1>
-        <div id="chat-window" ref={chatWindowRef}>
-          <div id="messages">
-            {messages.map((msg, index) => (
-              <div key={index} className={`${msg.type}-message`}>
-                {msg.text}
-              </div>
-            ))}
-          </div>
+    <div style={styles.voicebotContainer}>
+      <header style={styles.header}>Voice-based Infi-chat</header>
+      <main style={{ width: '100%' }}>
+        <div
+          style={styles.chatContainer}
+          ref={chatContainerRef}
+          role="log"
+          aria-live="polite"
+          aria-relevant="additions"
+          aria-label="Conversation Messages"
+        >
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              style={{
+                ...styles.message,
+                ...(msg.sender === 'user' ? styles.user : styles.bot),
+                ...(msg.isTyping ? styles.typing : {}),
+              }}
+            >
+              {msg.text}
+            </div>
+          ))}
+          {interimTranscript && (
+            <div style={{ ...styles.message, ...styles.user, ...styles.interim }}>
+              {interimTranscript}…
+            </div>
+          )}
         </div>
-        <form onSubmit={sendMessage}>
-          <input 
-            type="text" 
-            id="prompt" 
-            placeholder="Type your message here..." 
-            value={inputPrompt}
-            onChange={(e) => setInputPrompt(e.target.value)}
-          />
-          <button type="submit">
-            <FaPaperPlane />
+
+        <div style={styles.micWrapper} aria-label="Voice input controls">
+          <button
+            type="button"
+            id="mic-button"
+            onClick={toggleListening}
+            aria-pressed={isListening}
+            aria-label={isListening ? 'Stop listening' : 'Start voice input'}
+            title={isListening ? 'Listening...' : 'Click microphone to start listening'}
+            style={styles.micButton(isListening)}
+            disabled={!isSpeechSupported}
+          >
+            <img src={''} alt="Mic icon" style={styles.micImg} />
           </button>
-        </form>
-      </div>
+        </div>
+      </main>
     </div>
   );
 };

@@ -45,7 +45,7 @@
 /* All menu links white */
 
 .ant-menu-item a {
-    color: #fff !important;
+    color: #fff ;
     text-decoration: none;
     transition: none !important;
 }
