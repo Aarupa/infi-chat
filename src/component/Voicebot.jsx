@@ -262,7 +262,7 @@ const Voicebot = () => {
   try {
     const response = await axiosInstance.post('/api/indeed-chat/', {
       query: message,
-      chatbot_type: 'gmtt',
+      chatbot_type: 'indeed',
     });
 
     let botReply = response.data?.response || "";
